@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Full catalog migration for medical equipment
-15 categories, all subcategories, 3rd level and filters
-Now with bilingual support (Russian + English)
-"""
+
 import asyncio
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -576,8 +572,8 @@ async def run_migration():
             "description_en": cat_data.get("description_en", ""),
             "image": cat_data.get("image"),
             "order": order,
-            "created_at": datetime.now(datetime.UTC),
-            "updated_at": datetime.now(datetime.UTC)
+            "created_at": datetime.now(datetime.timezone.utc),
+            "updated_at": datetime.now(datetime.timezone.utc)
         }
         await db.categories.insert_one(category)
         category_map[cat_data["slug"]] = cat_id
@@ -605,8 +601,8 @@ async def run_migration():
                 "parent_id": cat_id,
                 "image": sub_image,
                 "order": sub_order,
-                "created_at": datetime.now(datetime.UTC),
-                "updated_at": datetime.now(datetime.UTC)
+                "created_at": datetime.now(datetime.timezone.utc),
+                "updated_at": datetime.now(datetime.timezone.utc)
             }
             await db.subcategories.insert_one(subcategory)
             subcategory_map[sub_slug] = sub_id
@@ -623,8 +619,8 @@ async def run_migration():
                         "parent_id": sub_id,
                         "image": third_data.get("image"),
                         "order": third_order,
-                        "created_at": datetime.now(datetime.UTC),
-                        "updated_at": datetime.now(datetime.UTC)
+                        "created_at": datetime.now(datetime.timezone.utc),
+                        "updated_at": datetime.now(datetime.timezone.utc)
                     }
                     await db.third_level_categories.insert_one(third_level)
                     third_level_map[third_data["slug"]] = third_id
@@ -654,8 +650,8 @@ async def run_migration():
             "in_stock": product_data.get("in_stock", True),
             "is_new": product_data.get("is_new", False),
             "is_popular": product_data.get("is_popular", False),
-            "created_at": datetime.now(datetime.UTC),
-            "updated_at": datetime.now(datetime.UTC)
+            "created_at": datetime.now(datetime.timezone.utc),
+            "updated_at": datetime.now(datetime.timezone.utc)
         }
         await db.products.insert_one(product)
         print(f"  ✅ {product_data['name']}")
@@ -704,7 +700,7 @@ async def run_migration():
         default_settings = {
             "id": "global_settings",
             "usd_to_tjs_rate": 11.2,
-            "updated_at": datetime.now(datetime.UTC)
+            "updated_at": datetime.now(datetime.timezone.utc)
         }
         await db.settings.insert_one(default_settings)
         print(f"   ✅ Created settings with USD to TJS rate: {default_settings['usd_to_tjs_rate']}")
