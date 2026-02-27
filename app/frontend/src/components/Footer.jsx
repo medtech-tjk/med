@@ -14,7 +14,7 @@ const Footer = () => {
           {/* Company info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Logo className="w-12 h-12 text-white" />
+              <Logo className="w-12 h-12" variant="footer" />
               <span className="text-xl font-bold text-white">Tib Technology</span>
             </div>
             <div className="space-y-2 mt-4">
