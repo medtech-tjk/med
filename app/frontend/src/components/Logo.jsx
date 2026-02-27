@@ -8,20 +8,13 @@ const Logo = ({ className = "w-9 h-9 md:w-11 md:h-11", color = "currentColor" })
             xmlns="http://www.w3.org/2000/svg"
             fill={color}
         >
-            {/* Left T - top horizontal bar */}
-            <rect x="5" y="12" width="45" height="13" />
+            {/* Left Shape (Γ) */}
+            <rect x="10" y="15" width="18" height="70" /> {/* Vertical stem */}
+            <rect x="28" y="15" width="24" height="18" /> {/* Horizontal top arm extending right */}
 
-            {/* Left T - vertical stem */}
-            <rect x="20" y="25" width="14" height="63" />
-
-            {/* Right T (mirrored/reversed) - top horizontal bar */}
-            <rect x="50" y="12" width="45" height="13" />
-
-            {/* Right T - vertical stem going down partway */}
-            <rect x="50" y="12" width="14" height="50" />
-
-            {/* Right T - bottom horizontal connecting to left */}
-            <rect x="34" y="50" width="30" height="12" />
+            {/* Right Shape (Γ) */}
+            <rect x="62" y="15" width="18" height="70" /> {/* Vertical stem */}
+            <rect x="80" y="15" width="10" height="18" /> {/* Horizontal top arm extending right */}
         </svg>
     );
 };
