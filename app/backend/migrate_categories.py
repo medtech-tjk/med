@@ -1,6 +1,5 @@
-"""
-Migration script to import categories from fullCatalogTree.js to MongoDB
-Run this once to populate the database with initial categories
+#!/usr/bin/env python3
+is once to populate the database with initial categories
 """
 import asyncio
 import os
