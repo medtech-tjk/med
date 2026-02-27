@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Logo = ({ className = "w-9 h-9 md:w-11 md:h-11", color = "currentColor" }) => {
     return (
         <svg
@@ -8,21 +6,18 @@ const Logo = ({ className = "w-9 h-9 md:w-11 md:h-11", color = "currentColor" })
             xmlns="http://www.w3.org/2000/svg"
             fill={color}
         >
-            {/* Left shape - top horizontal bar */}
-            <rect x="0" y="0" width="210" height="52" />
-            {/* Left shape - left vertical stem going down from top-left */}
-            <rect x="0" y="0" width="52" height="150" />
-            {/* Left shape - center vertical connection */}
-            <rect x="80" y="100" width="52" height="239" />
-            {/* Left shape - bottom horizontal bar */}
-            <rect x="80" y="287" width="130" height="52" />
+            {/* Left Shape (T-like without vertical on top) */}
+            <rect x="0" y="20" width="180" height="52" /> {/* Top horizontal */}
+            <rect x="80" y="72" width="52" height="230" /> {/* Main vertical stem */}
+            <rect x="132" y="250" width="48" height="52" /> {/* Bottom right nub */}
 
-            {/* Right shape - vertical stem */}
-            <rect x="252" y="0" width="52" height="339" />
-            {/* Right shape - top horizontal extension right */}
-            <rect x="252" y="0" width="132" height="52" />
+            {/* Right Shape (Γ) */}
+            <rect x="230" y="20" width="120" height="52" /> {/* Top horizontal */}
+            <rect x="230" y="20" width="52" height="200" /> {/* Shortened vertical stem */}
         </svg>
     );
 };
 
 export default Logo;
+
+
