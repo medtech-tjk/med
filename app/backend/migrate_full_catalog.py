@@ -1,8 +1,5 @@
-"""
-Full catalog migration for medical equipment
-15 categories, all subcategories, 3rd level and filters
-Now with bilingual support (Russian + English)
-"""
+#!/usr/bin/env python3
+
 import asyncio
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
