@@ -15,9 +15,11 @@ load_dotenv(ROOT_DIR / '.env')
 uploads_dir = ROOT_DIR / "uploads"
 uploads_dir.mkdir(parents=True, exist_ok=True)
 
-# Create documents directory
+# Create documents and logos directories
 documents_dir = uploads_dir / "documents"
 documents_dir.mkdir(parents=True, exist_ok=True)
+logos_dir = uploads_dir / "logos"
+logos_dir.mkdir(parents=True, exist_ok=True)
 
 # Import routes after uploads dir is created
 from routes import categories, products, orders, featured, upload, news, slides, admin, settings
