@@ -63,8 +63,8 @@ const Header = ({ cartCount = 0 }) => {
               <a href="tel:+992933339639" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
                 <Phone size={14} /> +992 93 333 96 39
               </a>
-              <a href="mailto:info@medtech.tj" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
-                <Mail size={14} /> info@medtech.tj
+              <a href="mailto:tjkmedtech@gmail.com" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
+                <Mail size={14} /> tjkmedtech@gmail.com
               </a>
             </div>
             <div>{t('workingHours')}</div>

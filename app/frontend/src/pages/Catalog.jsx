@@ -540,7 +540,7 @@ const Catalog = () => {
                             {language === 'ru' ? `По вашему запросу "${searchQuery}" ${t('tryChangingQuery')}` : `For your search "${searchQuery}" ${t('tryChangingQuery')}`}
                           </p>
                           <button
-                            onClick={() => window.location.href = 'mailto:info@medtech.tj?subject=Product search request: ' + searchQuery}
+                            onClick={() => window.location.href = 'mailto:tjkmedtech@gmail.com?subject=Product search request: ' + searchQuery}
                             className="bg-[#074089] hover:bg-[#2C5BB4] text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all"
                           >
                             {t('submitRequest')}

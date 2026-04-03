@@ -70,8 +70,8 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <Mail size={18} className="mt-0.5 text-white/70 flex-shrink-0" />
                 <div className="space-y-1">
-                  <a href="mailto:info@medtech.tj" className="hover:text-white/80 transition-colors block underline decoration-white/40 hover:decoration-white underline-offset-4">
-                    info@medtech.tj
+                  <a href="mailto:tjkmedtech@gmail.com" className="hover:text-white/80 transition-colors block underline decoration-white/40 hover:decoration-white underline-offset-4">
+                    tjkmedtech@gmail.com
                   </a>
                 </div>
               </li>

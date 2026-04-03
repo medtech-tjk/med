@@ -179,11 +179,11 @@ const Services = () => {
                                 <span>+992 93 333 96 39</span>
                             </a>
                             <a
-                                href="mailto:info@medtech.tj"
+                                href="mailto:tjkmedtech@gmail.com"
                                 className="flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-[#074089] transition-all text-sm"
                             >
                                 <Mail size={18} />
-                                <span>info@medtech.tj</span>
+                                <span>tjkmedtech@gmail.com</span>
                             </a>
                         </div>
                     </div>
