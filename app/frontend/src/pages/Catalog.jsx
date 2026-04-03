@@ -570,7 +570,7 @@ const Catalog = () => {
                           </p>
                         )}
                         <p>
-                          {language === 'ru' ? 'Для получения консультации или оформления заказа обращайтесь по телефону +992 91 861 12 59 или отправьте заявку через форму на сайте.' : 'For consultation or to place an order, call +992 91 861 12 59 or submit a request through the form on the website.'}
+                          {language === 'ru' ? 'Для получения консультации или оформления заказа обращайтесь по телефону +992 93 333 96 39 или отправьте заявку через форму на сайте.' : 'For consultation or to place an order, call +992 93 333 96 39 or submit a request through the form on the website.'}
                         </p>
                       </div>
                     </div>

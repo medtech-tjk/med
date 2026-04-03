@@ -60,8 +60,8 @@ const Header = ({ cartCount = 0 }) => {
         <div className="hidden md:block bg-gradient-to-r from-[#074089] to-[#2C5BB4] text-white py-2">
           <div className="container mx-auto px-4 flex justify-between items-center text-sm">
             <div className="flex gap-6">
-              <a href="tel:+992918611259" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
-                <Phone size={14} /> +992 91 861 12 59
+              <a href="tel:+992933339639" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
+                <Phone size={14} /> +992 93 333 96 39
               </a>
               <a href="mailto:info@medtech.tj" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
                 <Mail size={14} /> info@medtech.tj

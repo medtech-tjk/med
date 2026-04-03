@@ -176,7 +176,7 @@ const Services = () => {
                                 className="flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-[#074089] transition-all text-sm"
                             >
                                 <Phone size={18} />
-                                <span>+992 91 861 12 59</span>
+                                <span>+992 93 333 96 39</span>
                             </a>
                             <a
                                 href="mailto:info@medtech.tj"

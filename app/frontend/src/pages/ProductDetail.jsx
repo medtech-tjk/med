@@ -93,6 +93,33 @@ const ProductDetail = () => {
     }
   }, [slug, API_URL]);
 
+  // Установка title и meta description для SEO
+  useEffect(() => {
+    if (product) {
+      const title = `${getLocalizedName(product)} - Tib Technology`;
+      const desc = product.description ? product.description.replace(/<[^>]*>?/gm, '').substring(0, 160) : 'Купить медицинское оборудование в Таджикистане';
+      document.title = title;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = "description";
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.content = desc;
+      
+      let ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.content = title;
+      
+      let ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.content = desc;
+    }
+    
+    return () => {
+      document.title = "Tib Technology - Медицинское оборудование";
+    };
+  }, [product, language]);
+
   // Найти категорию и подкатегорию для breadcrumbs
   const findCategoryInfo = () => {
     if (!product || !categories.length) return { category: null, subcategory: null };
@@ -307,14 +334,14 @@ const ProductDetail = () => {
                   </div>
                 )}
                 {/* Badges */}
-                {(product.is_new || (product.old_price && product.old_price > product.price)) && (
+                {(!!product.is_new || (product.old_price > 0 && product.old_price > product.price)) && (
                   <div className="absolute top-3 left-3 flex flex-col gap-2">
-                    {product.is_new && (
+                    {!!product.is_new && (
                       <span className="bg-[#074089] text-white text-xs font-bold px-2 py-1 rounded">
                         {language === 'ru' ? 'НОВИНКА' : 'NEW'}
                       </span>
                     )}
-                    {product.old_price && product.old_price > product.price && (
+                    {product.old_price > 0 && product.old_price > product.price && (
                       <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
                         -{Math.round((1 - product.price / product.old_price) * 100)}%
                       </span>
@@ -335,7 +362,7 @@ const ProductDetail = () => {
                         : 'border-gray-200 hover:border-[#074089]'
                         }`}
                     >
-                      <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" />
+                      <img src={getImageUrl(img)} alt="" className="w-full h-full object-contain" />
                     </button>
                   ))}
                 </div>
@@ -452,7 +479,7 @@ const ProductDetail = () => {
                     {language === 'ru' ? 'В корзину' : 'Add to cart'}
                   </button>
                   <a
-                    href="tel:+992918611259"
+                    href="tel:+992933339639"
                     className="bg-white border-2 border-[#074089] text-[#074089] hover:bg-[#074089] hover:text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all"
                   >
                     <Phone size={18} />

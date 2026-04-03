@@ -298,7 +298,7 @@ const Cart = () => {
                     <img
                       src={getImageUrl(item.image)}
                       alt={item.name}
-                      className="w-20 h-20 md:w-32 md:h-32 object-cover rounded-lg flex-shrink-0"
+                      className="w-20 h-20 md:w-32 md:h-32 object-contain rounded-lg flex-shrink-0"
                       onError={(e) => { e.target.src = '/placeholder.png'; }}
                     />
                     <div className="flex-1 min-w-0">

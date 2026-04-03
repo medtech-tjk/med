@@ -56,19 +56,19 @@ const ProductCard = ({ product }) => {
           <img
             src={product.main_image || product.mainImage || '/placeholder.png'}
             alt={productName}
-            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-contain transform transition-transform duration-500 group-hover:scale-110"
             onError={(e) => { e.target.src = '/placeholder.png'; }}
           />
         </Link>
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {product.is_new && (
+          {!!product.is_new && (
             <span className="bg-[#074089] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
               {t('new')}
             </span>
           )}
-          {product.is_popular && (
+          {!!product.is_popular && (
             <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
               {t('hit')}
             </span>

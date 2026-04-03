@@ -114,8 +114,8 @@ const AdminSettings = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Курс USD к TJS
                         </label>
-                        <div className="flex items-center gap-3">
-                            <div className="flex-1 max-w-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div className="w-full sm:flex-1 sm:max-w-xs">
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">1 USD =</span>
                                     <input
@@ -131,7 +131,7 @@ const AdminSettings = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2 transition-colors"
+                                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"
                             >
                                 <Save size={18} />
                                 {saving ? 'Сохранение...' : 'Сохранить'}

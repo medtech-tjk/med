@@ -504,7 +504,7 @@ const AdminCategories = () => {
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Управление категориями</h1>
           <p className="text-gray-500 mt-1">3 уровня вложенности: Категория → Подкатегория → Тип</p>
@@ -515,7 +515,7 @@ const AdminCategories = () => {
             setCategoryForm({ name: '', slug: '', image: '', order: 0 });
             setShowCategoryForm(true);
           }}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
           <Plus size={18} />
           Добавить категорию
@@ -798,7 +798,7 @@ const AdminCategories = () => {
             {categories.map((category, categoryIndex) => (
               <div key={category.id} className="p-4">
                 {/* Level 1: Category */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
                   {/* Order controls */}
                   <div className="flex flex-col gap-0.5">
                     <button
@@ -819,36 +819,40 @@ const AdminCategories = () => {
                     </button>
                   </div>
 
-                  <span className="text-xs text-gray-400 w-6 text-center">{categoryIndex + 1}</span>
+                  <span className="text-xs text-gray-400 w-4 sm:w-6 text-center">{categoryIndex + 1}</span>
 
                   <button onClick={() => toggleExpand(category.id)} className="p-1 hover:bg-gray-100 rounded">
                     {expandedCategories[category.id] ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                   </button>
 
-                  {category.image ? (
-                    <img src={getImageUrl(category.image)} alt="" className="w-10 h-10 rounded object-cover" />
-                  ) : (
-                    <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
-                      <Image className="text-gray-400" size={16} />
-                    </div>
-                  )}
-
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{category.name}</p>
-                    <p className="text-sm text-gray-500">/{category.slug}</p>
+                  <div className="flex-shrink-0">
+                    {category.image ? (
+                      <img src={getImageUrl(category.image)} alt="" className="w-10 h-10 rounded object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
+                        <Image className="text-gray-400" size={16} />
+                      </div>
+                    )}
                   </div>
 
-                  <span className="text-sm text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                    {category.subcategories?.length || 0} подкатегорий
-                  </span>
+                  <div className="flex-1 min-w-[120px]">
+                    <p className="font-semibold text-gray-900 break-words">{category.name}</p>
+                    <p className="text-sm text-gray-500 break-words">/{category.slug}</p>
+                  </div>
 
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => startEditCategory(category)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Редактировать">
-                      <Edit2 size={18} />
-                    </button>
-                    <button onClick={() => handleDeleteCategory(category.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Удалить">
-                      <Trash2 size={18} />
-                    </button>
+                  <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 mt-2 sm:mt-0 pl-10 sm:pl-0">
+                    <span className="text-sm text-gray-400 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+                      {category.subcategories?.length || 0} подкатегорий
+                    </span>
+
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => startEditCategory(category)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Редактировать">
+                        <Edit2 size={18} />
+                      </button>
+                      <button onClick={() => handleDeleteCategory(category.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Удалить">
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -857,7 +861,7 @@ const AdminCategories = () => {
                   <div className="ml-8 mt-4 space-y-2">
                     {category.subcategories?.map((sub, subIndex) => (
                       <div key={sub.id}>
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
                           {/* Order controls for subcategories */}
                           <div className="flex flex-col gap-0.5">
                             <button
@@ -878,38 +882,42 @@ const AdminCategories = () => {
                             </button>
                           </div>
 
-                          <span className="text-xs text-gray-400 w-5 text-center">{subIndex + 1}</span>
+                          <span className="text-xs text-gray-400 w-4 sm:w-5 text-center">{subIndex + 1}</span>
 
                           <button onClick={() => toggleExpandSubcategory(sub.id)} className="p-1 hover:bg-gray-200 rounded">
                             {expandedSubcategories[sub.id] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                           </button>
 
-                          {sub.image ? (
-                            <img src={getImageUrl(sub.image)} alt="" className="w-8 h-8 rounded object-cover" />
-                          ) : (
-                            <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-                              <Image className="text-gray-400" size={12} />
-                            </div>
-                          )}
-
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-800">{sub.name}</p>
-                            <p className="text-sm text-gray-500">/{sub.slug}</p>
+                          <div className="flex-shrink-0">
+                            {sub.image ? (
+                              <img src={getImageUrl(sub.image)} alt="" className="w-8 h-8 rounded object-cover" />
+                            ) : (
+                              <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
+                                <Image className="text-gray-400" size={12} />
+                              </div>
+                            )}
                           </div>
 
-                          {sub.children && sub.children.length > 0 && (
-                            <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded">
-                              {sub.children.length} типов
-                            </span>
-                          )}
+                          <div className="flex-1 min-w-[120px]">
+                            <p className="font-medium text-gray-800 break-words">{sub.name}</p>
+                            <p className="text-sm text-gray-500 break-words">/{sub.slug}</p>
+                          </div>
 
-                          <div className="flex items-center gap-1">
-                            <button onClick={() => startEditSubcategory(sub, category.id)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg" title="Редактировать">
-                              <Edit2 size={16} />
-                            </button>
-                            <button onClick={() => handleDeleteSubcategory(sub.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg" title="Удалить">
-                              <Trash2 size={16} />
-                            </button>
+                          <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 mt-2 sm:mt-0 pl-10 sm:pl-0">
+                            {sub.children && sub.children.length > 0 && (
+                              <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded whitespace-nowrap">
+                                {sub.children.length} типов
+                              </span>
+                            )}
+
+                            <div className="flex items-center gap-1 ml-auto sm:ml-0">
+                              <button onClick={() => startEditSubcategory(sub, category.id)} className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg" title="Редактировать">
+                                <Edit2 size={16} />
+                              </button>
+                              <button onClick={() => handleDeleteSubcategory(sub.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg" title="Удалить">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         </div>
 
@@ -917,23 +925,25 @@ const AdminCategories = () => {
                         {expandedSubcategories[sub.id] && (
                           <div className="ml-8 mt-2 space-y-1">
                             {sub.children?.map((child, childIndex) => (
-                              <div key={child.id} className="flex items-center gap-3 p-2 bg-blue-50 rounded-lg">
-                                <span className="text-xs text-gray-400 w-4 text-center">{childIndex + 1}</span>
+                              <div key={child.id} className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 p-2 bg-blue-50 rounded-lg">
+                                <span className="text-xs text-gray-400 w-4 sm:w-4 text-center">{childIndex + 1}</span>
 
-                                {child.image ? (
-                                  <img src={getImageUrl(child.image)} alt="" className="w-6 h-6 rounded object-cover" />
-                                ) : (
-                                  <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
-                                    <Image className="text-blue-400" size={10} />
-                                  </div>
-                                )}
-
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-gray-700">{child.name}</p>
-                                  <p className="text-xs text-gray-500">/{child.slug}</p>
+                                <div className="flex-shrink-0">
+                                  {child.image ? (
+                                    <img src={getImageUrl(child.image)} alt="" className="w-6 h-6 rounded object-cover" />
+                                  ) : (
+                                    <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
+                                      <Image className="text-blue-400" size={10} />
+                                    </div>
+                                  )}
                                 </div>
 
-                                <div className="flex items-center gap-1">
+                                <div className="flex-1 min-w-[120px]">
+                                  <p className="text-sm font-medium text-gray-700 break-words">{child.name}</p>
+                                  <p className="text-xs text-gray-500 break-words">/{child.slug}</p>
+                                </div>
+
+                                <div className="flex items-center gap-1 ml-auto">
                                   <button onClick={() => startEditThirdLevel(child, sub.id)} className="p-1.5 text-blue-600 hover:bg-blue-100 rounded" title="Редактировать">
                                     <Edit2 size={14} />
                                   </button>
