@@ -169,6 +169,7 @@ const About = () => {
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
+                          e.target.parentElement.className = `w-20 h-20 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg overflow-hidden bg-gradient-to-br ${client.color}`;
                         }}
                       />
                     ) : null}
