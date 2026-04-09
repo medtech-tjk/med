@@ -49,8 +49,8 @@ const HeroSlider = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="relative h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden bg-gradient-to-br from-[#074089] to-[#2C5BB4] rounded-2xl shadow-xl flex items-center justify-center">
           <div className="text-center text-white p-8">
-            <h2 className="text-2xl md:text-4xl font-bold mb-4">Добро пожаловать в Tib Tekhnologiya</h2>
-            <p className="text-lg opacity-90 mb-6">Профессиональное медицинское оборудование</p>
+            <h2 className="text-2xl md:text-4xl font-bold mb-4">Добро пожаловать в ООО «Тиб Технология»</h2>
+            <p className="text-lg opacity-90 mb-6">Магазин медицинского оборудования</p>
             <Link
               to="/catalog"
               className="inline-block bg-white text-[#074089] font-semibold px-8 py-3 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"

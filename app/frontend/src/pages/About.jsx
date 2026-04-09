@@ -44,7 +44,7 @@ const About = () => {
               <Building2 size={80} className="mx-auto mb-4 drop-shadow-lg" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 opacity-0 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-              Tib Technology
+              ООО «Тиб Технология»
             </h1>
             <p className="text-xl md:text-2xl opacity-90 opacity-0 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
               {trans.subtitle}
@@ -150,18 +150,33 @@ const About = () => {
               {[
                 { name: 'РНЦССХ', abbr: 'РНЦ ССХ', color: 'from-blue-500 to-blue-600' },
                 { name: 'Истиклол', abbr: 'МЦ', color: 'from-green-500 to-green-600' },
-                { name: 'Министерство здравоохранения', abbr: 'МЗиСЗН', color: 'from-purple-500 to-purple-600' },
-                { name: 'JICA', abbr: 'JICA', color: 'from-red-500 to-red-600' },
-                { name: 'GIZ', abbr: 'GIZ', color: 'from-orange-500 to-orange-600' },
-                { name: 'KfW', abbr: 'KfW', color: 'from-teal-500 to-teal-600' },
-                { name: 'Фонд Ага Хана', abbr: 'AKF', color: 'from-indigo-500 to-indigo-600' },
+                { name: 'Министерство здравоохранения', abbr: 'МЗиСЗН', color: 'from-purple-500 to-purple-600', logo: `${API_URL}/uploads/logos/Emblem_of_Tajikistan.svg` },
+                { name: 'JICA', abbr: 'JICA', color: 'from-red-500 to-red-600', logo: `${API_URL}/uploads/logos/jica.jpg` },
+                { name: 'GIZ', abbr: 'GIZ', color: 'from-orange-500 to-orange-600', logo: `${API_URL}/uploads/logos/giz.jpg` },
+                { name: 'KfW', abbr: 'KfW', color: 'from-teal-500 to-teal-600', logo: `${API_URL}/uploads/logos/kfw.jpg` },
+                { name: 'Фонд Ага Хана', abbr: 'AKF', color: 'from-indigo-500 to-indigo-600', logo: `${API_URL}/uploads/logos/photo_2026-04-10_04-07-22.jpg` },
                 { name: 'Центр трансплантологии', abbr: 'ЦТ', color: 'from-pink-500 to-pink-600' }
               ].map((client, index) => (
                 <div
                   key={index}
                   className="flex flex-col items-center justify-center p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-2 border border-gray-100">
-                  <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${client.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg`}>
-                    <span className="text-white font-bold text-sm">{client.abbr}</span>
+                  <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg overflow-hidden ${client.logo ? 'bg-white p-2' : `bg-gradient-to-br ${client.color}`}`}>
+                    {client.logo ? (
+                      <img 
+                        src={client.logo} 
+                        alt={client.name} 
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                    ) : null}
+                    <span 
+                      className={`text-white font-bold text-sm ${client.logo ? 'hidden' : ''}`}
+                    >
+                      {client.abbr}
+                    </span>
                   </div>
                   <p className="text-xs text-center text-gray-700 font-semibold">{client.name}</p>
                 </div>
@@ -191,13 +206,13 @@ const About = () => {
                   name: 'Fujifilm',
                   country: language === 'ru' ? 'Япония' : 'Japan',
                   url: 'https://www.fujifilm.com/fhc/',
-                  logo: `${API_URL}/uploads/logos/fujifilm.png`
+                  logo: `${API_URL}/uploads/logos/fujifilm.jpg`
                 },
                 {
                   name: 'B. Braun',
                   country: language === 'ru' ? 'Германия' : 'Germany',
                   url: 'https://www.bbraun.com/',
-                  logo: `${API_URL}/uploads/logos/bbraun.png`
+                  logo: `${API_URL}/uploads/logos/bbraun.jpg`
                 },
                 {
                   name: 'Hamilton Medical',
@@ -209,19 +224,19 @@ const About = () => {
                   name: 'Karl Storz',
                   country: language === 'ru' ? 'Германия' : 'Germany',
                   url: 'https://www.karlstorz.com/',
-                  logo: `${API_URL}/uploads/logos/karlstorz.png`
+                  logo: `${API_URL}/uploads/logos/karlstorz.jpg`
                 },
                 {
                   name: 'Roche Diagnostics',
                   country: language === 'ru' ? 'Швейцария' : 'Switzerland',
                   url: 'https://www.roche.com/',
-                  logo: `${API_URL}/uploads/logos/roche.png`
+                  logo: `${API_URL}/uploads/logos/roche.webp`
                 },
                 {
                   name: 'KLS Martin',
                   country: language === 'ru' ? 'Германия' : 'Germany',
                   url: 'https://www.klsmartin.com/',
-                  logo: `${API_URL}/uploads/logos/klsmartin.png`
+                  logo: `${API_URL}/uploads/logos/klsmartin.jpg`
                 },
                 {
                   name: 'Mindray',
@@ -233,7 +248,7 @@ const About = () => {
                   name: 'Samsung Medison',
                   country: language === 'ru' ? 'Южная Корея' : 'South Korea',
                   url: 'https://www.samsunghealthcare.com/',
-                  logo: `${API_URL}/uploads/logos/samsung.png`
+                  logo: `${API_URL}/uploads/logos/samsung.jpg`
                 }
               ].map((supplier, index) => (
                 <a
