@@ -57,7 +57,9 @@ const ThirdLevelView = () => {
 
   // Загрузка товаров
   const { products, loading: productsLoading } = useProducts({
-    subcategory_id: thirdLevel?.id || subcategory?.id,
+    ...(thirdLevel
+      ? { third_level_id: thirdLevel.id }
+      : { subcategory_id: subcategory?.id }),
     brand: selectedBrand || undefined
   });
 
