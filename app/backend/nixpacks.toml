@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = ["python -m venv /opt/venv && /opt/venv/bin/pip install -r requirements.txt"]
+
+[phases.build]
+# No build steps needed for this Python app, 
+# and we explicitly don't want to use secrets here.
+cmds = ["echo 'Build phase completed'"]
+
+[start]
+cmd = "/opt/venv/bin/uvicorn server:app --host 0.0.0.0 --port $PORT"
