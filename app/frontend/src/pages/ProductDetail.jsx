@@ -93,6 +93,21 @@ const ProductDetail = () => {
     }
   }, [slug, API_URL]);
 
+  // Найти категорию и подкатегорию для breadcrumbs
+  const findCategoryInfo = () => {
+    if (!product || !categories.length) return { category: null, subcategory: null };
+
+    for (const cat of categories) {
+      if (cat.id === product.category_id) {
+        const sub = cat.subcategories?.find(s => s.id === product.subcategory_id);
+        return { category: cat, subcategory: sub };
+      }
+    }
+    return { category: null, subcategory: null };
+  };
+
+  const { category, subcategory } = findCategoryInfo();
+
   // Установка title, meta description и JSON-LD для SEO
   useEffect(() => {
     if (product) {
@@ -202,21 +217,6 @@ const ProductDetail = () => {
       if (breadcrumbLd) breadcrumbLd.remove();
     };
   }, [product, language, category, subcategory, getLocalizedName, API_URL]);
-
-  // Найти категорию и подкатегорию для breadcrumbs
-  const findCategoryInfo = () => {
-    if (!product || !categories.length) return { category: null, subcategory: null };
-
-    for (const cat of categories) {
-      if (cat.id === product.category_id) {
-        const sub = cat.subcategories?.find(s => s.id === product.subcategory_id);
-        return { category: cat, subcategory: sub };
-      }
-    }
-    return { category: null, subcategory: null };
-  };
-
-  const { category, subcategory } = findCategoryInfo();
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return '';
