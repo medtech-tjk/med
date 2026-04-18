@@ -1,0 +1,22 @@
+{
+  "public": "build",
+  "rewrites": [
+    { "source": "sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "robots.txt", "destination": "/robots.txt" },
+    { "source": "**", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "**/*.@(js|css|map)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain" }
+      ]
+    }
+  ]
+}
