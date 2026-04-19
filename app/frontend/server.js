@@ -152,9 +152,54 @@ app.use(async (req, res, next) => {
   }
 });
 
-// For all other routes, serve index.html (SPA fallback)
+// ============================================================
+// Clean up old/phantom URLs that Google indexed
+// ============================================================
+
+// Strip .html extension — redirect to clean URL
+app.get('*.html', (req, res) => {
+  const cleanPath = req.path.replace(/\.html$/, '');
+  console.log(`[Redirect] .html stripped: ${req.path} -> ${cleanPath}`);
+  res.redirect(301, cleanPath);
+});
+
+// Redirect old product URLs: /product-diagnostic-* -> /product/diagnostic-*
+app.get(/^\/product-(.+)$/, (req, res) => {
+  const slug = req.params[0];
+  const newUrl = `/product/${slug}`;
+  console.log(`[Redirect] Old product URL: ${req.path} -> ${newUrl}`);
+  res.redirect(301, newUrl);
+});
+
+// Valid SPA routes — only these should serve index.html
+const VALID_SPA_ROUTES = [
+  /^\/$/,
+  /^\/catalog(\/.*)?$/,
+  /^\/product\/[^/]+$/,
+  /^\/brand\/[^/]+$/,
+  /^\/cart$/,
+  /^\/about$/,
+  /^\/services$/,
+  /^\/admin(\/.*)?$/,
+];
+
+function isValidSpaRoute(pathname) {
+  return VALID_SPA_ROUTES.some(pattern => pattern.test(pathname));
+}
+
+// For valid routes, serve index.html (SPA fallback)
 app.get('*', (req, res) => {
   const indexPath = path.join(buildPath, 'index.html');
+
+  if (!isValidSpaRoute(req.path)) {
+    // Unknown route — return 404 so Google doesn't index garbage URLs
+    console.log(`[404] Unknown route: ${req.path}`);
+    if (fs.existsSync(indexPath)) {
+      return res.status(404).sendFile(indexPath);
+    }
+    return res.status(404).send('Page not found');
+  }
+
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
