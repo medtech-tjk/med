@@ -48,6 +48,59 @@ function shouldPrerender(pathname) {
 
 const buildPath = path.join(__dirname, 'build');
 
+// ============================================================
+// Sitemap & Robots - proxy to backend for dynamic generation
+// These MUST be before static file serving to override build/ files
+// ============================================================
+
+// Proxy sitemap.xml to backend (includes all products dynamically)
+app.get('/sitemap.xml', async (req, res) => {
+  if (!BACKEND_URL) {
+    // Fallback to static sitemap if no backend
+    const staticPath = path.join(buildPath, 'sitemap.xml');
+    if (fs.existsSync(staticPath)) return res.sendFile(staticPath);
+    return res.status(404).send('Sitemap not found');
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(`${BACKEND_URL}/sitemap.xml`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+
+    if (response.ok) {
+      const xml = await response.text();
+      console.log(`[Sitemap] Served dynamic sitemap from backend (${xml.length} bytes)`);
+      return res.set('Content-Type', 'application/xml').send(xml);
+    }
+  } catch (err) {
+    console.warn(`[Sitemap] Backend proxy failed: ${err.message}`);
+  }
+
+  // Fallback to static sitemap
+  const staticPath = path.join(buildPath, 'sitemap.xml');
+  if (fs.existsSync(staticPath)) {
+    console.log('[Sitemap] Falling back to static sitemap');
+    return res.sendFile(staticPath);
+  }
+  res.status(404).send('Sitemap not found');
+});
+
+// Proxy robots.txt - serve from public/ but ensure correct Sitemap URL
+app.get('/robots.txt', (req, res) => {
+  const robotsPath = path.join(buildPath, 'robots.txt');
+  if (fs.existsSync(robotsPath)) {
+    return res.type('text/plain').sendFile(robotsPath);
+  }
+  // Fallback if file missing
+  res.type('text/plain').send(
+    `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/*\nDisallow: /cart\n\nSitemap: https://medtech.tj/sitemap.xml\n`
+  );
+});
+
 // Serve static files from build directory
 app.use(express.static(buildPath, {
   // Don't serve index.html for missing files - we'll handle that
