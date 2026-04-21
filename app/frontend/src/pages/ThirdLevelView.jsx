@@ -118,9 +118,9 @@ const ThirdLevelView = () => {
 
   if (categoriesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <Loader2 className="animate-spin text-[#074089] mx-auto" size={48} />
         </div>
         <Footer />
@@ -130,9 +130,9 @@ const ThirdLevelView = () => {
 
   if (!category || !subcategory) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Категория не найдена</h1>
           <Link to="/catalog" className="text-[#074089] hover:text-[#2C5BB4]">
             Вернуться в каталог
@@ -146,11 +146,11 @@ const ThirdLevelView = () => {
   const currentName = getLocalizedName(thirdLevel) || getLocalizedName(subcategory);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart cartCount={cart.length} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">Главная</Link>

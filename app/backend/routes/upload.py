@@ -29,6 +29,7 @@ ALLOWED_DOCUMENT_EXTENSIONS = {'.pdf'}
 
 # ============================================================
 # Cloudinary Configuration
+# Supports both CLOUDINARY_URL and separate env vars
 # ============================================================
 CLOUDINARY_CONFIGURED = False
 
@@ -36,11 +37,19 @@ try:
     import cloudinary
     import cloudinary.uploader
 
+    cloudinary_url = os.environ.get('CLOUDINARY_URL')
     cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
     api_key = os.environ.get('CLOUDINARY_API_KEY')
     api_secret = os.environ.get('CLOUDINARY_API_SECRET')
 
-    if cloud_name and api_key and api_secret:
+    if cloudinary_url:
+        # CLOUDINARY_URL format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        # The cloudinary library auto-parses this from env
+        os.environ['CLOUDINARY_URL'] = cloudinary_url
+        cloudinary.config()
+        CLOUDINARY_CONFIGURED = True
+        logger.info(f"✅ Cloudinary configured via CLOUDINARY_URL")
+    elif cloud_name and api_key and api_secret:
         cloudinary.config(
             cloud_name=cloud_name,
             api_key=api_key,

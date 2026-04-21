@@ -92,6 +92,85 @@ const CategoryView = () => {
     window.scrollTo(0, 0);
   }, [categorySlug]);
 
+  // SEO: dynamic title, meta description, canonical, JSON-LD
+  useEffect(() => {
+    if (!category) return;
+
+    const name = getLocalizedName(category);
+    const title = `${name} — медицинское оборудование | Tib Technology`;
+    const desc = `${name} — профессиональное медицинское оборудование от ведущих мировых производителей. Купить в Душанбе. Tib Technology, Таджикистан.`;
+
+    document.title = title;
+
+    // Meta description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = desc;
+
+    // Open Graph
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.content = title;
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.content = desc;
+
+    // Canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `https://medtech.tj/catalog/${category.slug}`;
+
+    // BreadcrumbList JSON-LD
+    let breadcrumbJsonLd = document.querySelector('#category-breadcrumb-jsonld');
+    if (!breadcrumbJsonLd) {
+      breadcrumbJsonLd = document.createElement('script');
+      breadcrumbJsonLd.id = 'category-breadcrumb-jsonld';
+      breadcrumbJsonLd.type = 'application/ld+json';
+      document.head.appendChild(breadcrumbJsonLd);
+    }
+    breadcrumbJsonLd.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://medtech.tj/" },
+        { "@type": "ListItem", "position": 2, "name": "Каталог", "item": "https://medtech.tj/catalog" },
+        { "@type": "ListItem", "position": 3, "name": name, "item": `https://medtech.tj/catalog/${category.slug}` }
+      ]
+    });
+
+    // CollectionPage JSON-LD
+    let collectionJsonLd = document.querySelector('#category-collection-jsonld');
+    if (!collectionJsonLd) {
+      collectionJsonLd = document.createElement('script');
+      collectionJsonLd.id = 'category-collection-jsonld';
+      collectionJsonLd.type = 'application/ld+json';
+      document.head.appendChild(collectionJsonLd);
+    }
+    collectionJsonLd.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": title,
+      "description": desc,
+      "url": `https://medtech.tj/catalog/${category.slug}`,
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Tib Technology",
+        "url": "https://medtech.tj"
+      }
+    });
+
+    return () => {
+      document.title = 'Tib Technology — Медицинское оборудование';
+      const el1 = document.querySelector('#category-breadcrumb-jsonld');
+      if (el1) el1.remove();
+      const el2 = document.querySelector('#category-collection-jsonld');
+      if (el2) el2.remove();
+      const can = document.querySelector('link[rel="canonical"]');
+      if (can) can.remove();
+    };
+  }, [category, language, getLocalizedName, categorySlug]);
+
   const clearFilters = () => {
     setSelectedBrand('');
     setPriceRange({ min: '', max: '' });
@@ -100,9 +179,9 @@ const CategoryView = () => {
 
   if (categoriesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-[#074089] mx-auto" size={48} />
         </div>
         <Footer />
@@ -112,9 +191,9 @@ const CategoryView = () => {
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('categoryNotFound')}</h1>
           <Link to="/catalog" className="text-[#074089] hover:text-[#2C5BB4]">
             {t('backToCatalog')}
@@ -126,11 +205,11 @@ const CategoryView = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart cartCount={cart.length} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">{t('home')}</Link>

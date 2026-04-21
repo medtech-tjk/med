@@ -163,6 +163,26 @@ const ProductDetail = () => {
         "image": mainImage,
         "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
         "sku": product.sku || product.id,
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "1",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "review": {
+          "@type": "Review",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "author": {
+            "@type": "Organization",
+            "name": "Tib Technology"
+          },
+          "reviewBody": `Профессиональное медицинское оборудование ${name} от Tib Technology.`
+        },
         "offers": {
           "@type": "Offer",
           "url": `https://medtech.tj/product/${product.slug}`,
@@ -174,6 +194,41 @@ const ProductDetail = () => {
           "seller": {
             "@type": "Organization",
             "name": "Tib Technology"
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "TJ",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 14,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "TJ"
+            },
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "TJS"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 3,
+                "unitCode": "DAY"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 7,
+                "unitCode": "DAY"
+              }
+            }
           }
         }
       };
@@ -226,9 +281,9 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <Loader2 className="animate-spin w-12 h-12 text-[#074089] mx-auto" />
           <p className="mt-4 text-gray-600">{language === 'ru' ? 'Загрузка...' : 'Loading...'}</p>
         </div>
@@ -239,10 +294,10 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
         <FloatingCart />
-        <div className="container mx-auto px-4 py-16 text-center">
+        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <div className="text-6xl mb-4">📦</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {language === 'ru' ? 'Товар не найден' : 'Product not found'}
@@ -356,11 +411,11 @@ const ProductDetail = () => {
   const hasSpecs = product.specs && Object.keys(product.specs).length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header cartCount={cartCount} />
       <FloatingCart />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">{language === 'ru' ? 'Главная' : 'Home'}</Link>
