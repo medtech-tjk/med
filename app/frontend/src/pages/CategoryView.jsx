@@ -37,8 +37,25 @@ const CategoryView = () => {
 
   // Получить уникальные бренды
   const brands = useMemo(() => {
-    const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
-    return uniqueBrands.sort();
+    const unique = new Map();
+    products.forEach(p => {
+      if (!p.brand || typeof p.brand !== 'string') return;
+      const trimmed = p.brand.trim();
+      const lower = trimmed.toLowerCase();
+      if (lower === 'все бренды' || lower === 'all brands' || lower === 'all') return;
+      
+      if (!unique.has(lower)) {
+        unique.set(lower, trimmed);
+      } else {
+        const current = unique.get(lower);
+        const currentUppers = (current.match(/[A-ZА-Я]/g) || []).length;
+        const newUppers = (trimmed.match(/[A-ZА-Я]/g) || []).length;
+        if (newUppers > currentUppers) {
+          unique.set(lower, trimmed);
+        }
+      }
+    });
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
   }, [products]);
 
   // Фильтрация по цене и наличию

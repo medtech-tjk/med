@@ -62,8 +62,25 @@ const SubcategoryView = () => {
 
   // Получить уникальные бренды из товаров
   const brands = useMemo(() => {
-    const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
-    return uniqueBrands.sort();
+    const unique = new Map();
+    products.forEach(p => {
+      if (!p.brand || typeof p.brand !== 'string') return;
+      const trimmed = p.brand.trim();
+      const lower = trimmed.toLowerCase();
+      if (lower === 'все бренды' || lower === 'all brands' || lower === 'all') return;
+      
+      if (!unique.has(lower)) {
+        unique.set(lower, trimmed);
+      } else {
+        const current = unique.get(lower);
+        const currentUppers = (current.match(/[A-ZА-Я]/g) || []).length;
+        const newUppers = (trimmed.match(/[A-ZА-Я]/g) || []).length;
+        if (newUppers > currentUppers) {
+          unique.set(lower, trimmed);
+        }
+      }
+    });
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
   }, [products]);
 
   // Фильтрация товаров
@@ -286,11 +303,35 @@ const SubcategoryView = () => {
                         <option value="">{t('all')}</option>
                         {filterKey === 'Бренд' ? (
                           // Для брендов показываем бренды из товаров + опции из фильтров
-                          [...new Set([...brands, ...filterOptions])].sort().map(opt => (
+                          (() => {
+                            const combined = [...brands, ...filterOptions];
+                            const unique = new Map();
+                            combined.forEach(opt => {
+                              if (typeof opt !== 'string') return;
+                              const trimmed = opt.trim();
+                              const lower = trimmed.toLowerCase();
+                              if (lower === 'все бренды' || lower === 'all brands' || lower === 'all') return;
+                              if (!unique.has(lower)) {
+                                unique.set(lower, trimmed);
+                              } else {
+                                const current = unique.get(lower);
+                                const currentUppers = (current.match(/[A-ZА-Я]/g) || []).length;
+                                const newUppers = (trimmed.match(/[A-ZА-Я]/g) || []).length;
+                                if (newUppers > currentUppers) {
+                                  unique.set(lower, trimmed);
+                                }
+                              }
+                            });
+                            return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
+                          })().map(opt => (
                             <option key={opt} value={opt}>{opt}</option>
                           ))
                         ) : (
-                          filterOptions.map(opt => (
+                          filterOptions.filter(opt => {
+                            if (typeof opt !== 'string') return true;
+                            const lower = opt.trim().toLowerCase();
+                            return lower !== 'все бренды' && lower !== 'all brands' && lower !== 'all';
+                          }).map(opt => (
                             <option key={opt} value={opt}>{opt}</option>
                           ))
                         )}
@@ -300,7 +341,11 @@ const SubcategoryView = () => {
                     {/* Checkbox group (для типов, классов и т.д.) */}
                     {!isInput && filterOptions.length <= 8 && filterOptions.length > 0 && (
                       <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {filterOptions.map(option => (
+                        {filterOptions.filter(opt => {
+                            if (typeof opt !== 'string') return true;
+                            const lower = opt.trim().toLowerCase();
+                            return lower !== 'все бренды' && lower !== 'all brands' && lower !== 'all';
+                          }).map(option => (
                           <label key={option} className="flex items-center gap-2 cursor-pointer text-sm">
                             <input
                               type="checkbox"
