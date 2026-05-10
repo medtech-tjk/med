@@ -156,9 +156,42 @@ app.use(async (req, res, next) => {
 // Clean up old/phantom URLs that Google indexed
 // ============================================================
 
-// Strip .html extension — redirect to clean URL
+// Redirect /index to / (Google indexed /index which is not a valid SPA route)
+app.get('/index', (req, res) => {
+  console.log(`[Redirect] /index -> /`);
+  res.redirect(301, '/');
+});
+
+// Redirect removed pages to appropriate alternatives
+app.get('/contact', (req, res) => {
+  console.log(`[Redirect] /contact -> /about`);
+  res.redirect(301, '/about');
+});
+app.get('/news', (req, res) => {
+  console.log(`[Redirect] /news -> /`);
+  res.redirect(301, '/');
+});
+
+// Strip .html extension — redirect directly to FINAL clean URL (no redirect chains)
 app.get('*.html', (req, res) => {
-  const cleanPath = req.path.replace(/\.html$/, '');
+  let cleanPath = req.path.replace(/\.html$/, '');
+  // Resolve old product URLs in one step: /product-foo.html -> /product/foo
+  const productMatch = cleanPath.match(/^\/product-(.+)$/);
+  if (productMatch) {
+    cleanPath = `/product/${productMatch[1]}`;
+  }
+  // /index.html -> / (not /index)
+  if (cleanPath === '/index') {
+    cleanPath = '/';
+  }
+  // /contact.html -> /about
+  if (cleanPath === '/contact') {
+    cleanPath = '/about';
+  }
+  // /news.html -> /
+  if (cleanPath === '/news') {
+    cleanPath = '/';
+  }
   console.log(`[Redirect] .html stripped: ${req.path} -> ${cleanPath}`);
   res.redirect(301, cleanPath);
 });
