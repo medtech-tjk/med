@@ -58,6 +58,7 @@ class Product(BaseModel):
     third_level_id: Optional[str] = None
     price: float
     old_price: Optional[float] = None
+    price_on_request: bool = False
     main_image: Optional[str] = None
     images: List[str] = []
     description: str = ""

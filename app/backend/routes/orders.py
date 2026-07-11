@@ -38,12 +38,22 @@ async def send_telegram_notification(order: dict):
     try:
         # Format items list
         items_text = ""
+        has_price_on_request = False
         for i, item in enumerate(order.get('items', []), 1):
             item_name = item.get('name', 'Товар')
             item_qty = item.get('quantity', 1)
-            item_price = item.get('price', 0)
-            items_text += f"\n   {i}. {item_name} x{item_qty} = {item_price:,.0f} сом"
+            if item.get('price_on_request'):
+                has_price_on_request = True
+                price_text = "по запросу"
+            else:
+                item_price = item.get('price', 0)
+                price_text = f"{item_price:,.0f} сом"
+            items_text += f"\n   {i}. {item_name} x{item_qty} = {price_text}"
         
+        total_text = f"{order.get('total', 0):,.0f} сом"
+        if has_price_on_request:
+            total_text += " + по запросу"
+            
         # Create message
         message = f"""🛒 <b>НОВАЯ ЗАЯВКА!</b>
 
@@ -55,7 +65,7 @@ async def send_telegram_notification(order: dict):
 
 📦 <b>Товары:</b>{items_text}
 
-💰 <b>ИТОГО:</b> {order.get('total', 0):,.0f} сом
+💰 <b>ИТОГО:</b> {total_text}
 
 💬 <b>Комментарий:</b> {order.get('message', '-') or 'нет'}
 
