@@ -26,6 +26,7 @@ const Cart = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const hasOnRequestItems = cartItems.some(item => item.price_on_request);
 
   // Функция для нормализации товаров из localStorage (группировка дубликатов)
   const normalizeCartItems = useCallback((rawCart) => {
@@ -46,6 +47,7 @@ const Cart = () => {
           name_en: item.name_en,
           slug: item.slug,
           price: item.price,
+          price_on_request: item.price_on_request,
           brand: item.brand,
           image: item.image || item.main_image || item.mainImage,
           quantity: item.quantity || 1
@@ -184,6 +186,7 @@ const Cart = () => {
           id: item.id,
           name: item.name,
           price: item.price,
+          price_on_request: item.price_on_request,
           quantity: item.quantity,
           brand: item.brand
         })),
@@ -343,10 +346,18 @@ const Cart = () => {
                           </button>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <div className="text-[10px] md:text-xs text-gray-500">{t('from')} {formatPrice(item.price)} × {item.quantity}</div>
-                          <div className="text-lg md:text-2xl font-bold text-[#074089]">
-                            {formatPrice(item.price * item.quantity)}
-                          </div>
+                          {item.price_on_request ? (
+                            <div className="text-sm md:text-base font-semibold text-[#074089]">
+                              {language === 'ru' ? 'Цена по запросу' : 'Price on request'}
+                            </div>
+                          ) : (
+                            <>
+                              <div className="text-[10px] md:text-xs text-gray-500">{t('from')} {formatPrice(item.price)} × {item.quantity}</div>
+                              <div className="text-lg md:text-2xl font-bold text-[#074089]">
+                                {formatPrice(item.price * item.quantity)}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -371,7 +382,14 @@ const Cart = () => {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold">{t('sum')}:</span>
-                        <span className="text-2xl font-bold text-[#074089]">{formatPrice(getTotal())}</span>
+                        <span className="text-2xl font-bold text-[#074089]">
+                          {formatPrice(getTotal())}
+                          {hasOnRequestItems && (
+                            <span className="text-sm font-medium text-gray-500 ml-1">
+                              {language === 'ru' ? ' + по запросу' : ' + on request'}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     </div>
 
@@ -399,7 +417,14 @@ const Cart = () => {
                     <div className="bg-gray-50 rounded-lg p-4 mb-6">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">{t('total')}:</span>
-                        <span className="text-xl font-bold text-[#074089]">{formatPrice(getTotal())}</span>
+                        <span className="text-xl font-bold text-[#074089]">
+                          {formatPrice(getTotal())}
+                          {hasOnRequestItems && (
+                            <span className="text-sm font-medium text-gray-500 ml-1">
+                              {language === 'ru' ? ' + по запросу' : ' + on request'}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     </div>
 

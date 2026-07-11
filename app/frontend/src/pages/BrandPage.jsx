@@ -40,9 +40,17 @@ const BrandPage = () => {
 
         // Sort
         if (sortBy === 'price-asc') {
-            filtered.sort((a, b) => a.price - b.price);
+            filtered.sort((a, b) => {
+                if (a.price_on_request && !b.price_on_request) return 1;
+                if (!a.price_on_request && b.price_on_request) return -1;
+                return a.price - b.price;
+            });
         } else if (sortBy === 'price-desc') {
-            filtered.sort((a, b) => b.price - a.price);
+            filtered.sort((a, b) => {
+                if (a.price_on_request && !b.price_on_request) return 1;
+                if (!a.price_on_request && b.price_on_request) return -1;
+                return b.price - a.price;
+            });
         } else if (sortBy === 'new') {
             filtered.sort((a, b) => (b.is_new ? 1 : 0) - (a.is_new ? 1 : 0));
         }

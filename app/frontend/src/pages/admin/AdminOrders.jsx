@@ -178,12 +178,17 @@ const AdminOrders = () => {
                   {selectedOrder.items?.map((item, index) => (
                     <div key={index} className="flex justify-between">
                       <span>{item.name}</span>
-                      <span className="font-medium">{formatPrice(item.price)}</span>
+                      <span className="font-medium">
+                        {item.price_on_request ? 'По запросу' : formatPrice(item.price)}
+                      </span>
                     </div>
                   ))}
                   <div className="border-t pt-2 flex justify-between font-bold">
                     <span>Итого:</span>
-                    <span>{formatPrice(selectedOrder.total)}</span>
+                    <span>
+                      {formatPrice(selectedOrder.total)}
+                      {selectedOrder.items?.some(i => i.price_on_request) && ' + по запросу'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -238,7 +243,10 @@ const AdminOrders = () => {
                       <p className="font-medium text-gray-900">{order.full_name || order.name}</p>
                       <p className="text-sm text-gray-500">{order.phone}</p>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900">{formatPrice(order.total)}</td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">
+                      {formatPrice(order.total)}
+                      {order.items?.some(i => i.price_on_request) && ' + по запросу'}
+                    </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[order.status]}`}>
                         {statusLabels[order.status]}

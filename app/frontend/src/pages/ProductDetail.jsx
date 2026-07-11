@@ -340,6 +340,7 @@ const ProductDetail = () => {
         name: product.name,
         name_en: product.name_en,
         price: product.price,
+        price_on_request: product.price_on_request,
         image: product.main_image,
         slug: product.slug,
         brand: product.brand,
@@ -373,6 +374,7 @@ const ProductDetail = () => {
         name: product.name,
         name_en: product.name_en,
         price: product.price,
+        price_on_request: product.price_on_request,
         image: product.main_image,
         slug: product.slug,
         brand: product.brand,
@@ -548,19 +550,27 @@ const ProductDetail = () => {
 
               {/* Price Section */}
               <div className="bg-gray-50 rounded-xl p-6 mb-6">
-                <div className="flex items-baseline gap-3 mb-2">
-                  {product.old_price && product.old_price > product.price ? (
-                    <span className="text-xl text-gray-400 line-through">
-                      {formatPrice(product.old_price)}
-                    </span>
-                  ) : null}
-                  <span className="text-3xl font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  {t('from')} * {language === 'ru' ? 'Цена может измениться в зависимости от комплектации' : 'Price may vary depending on configuration'}
-                </p>
+                {product.price_on_request ? (
+                  <div className="text-3xl font-bold text-[#074089]">
+                    {language === 'ru' ? 'Цена по запросу' : 'Price on request'}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-baseline gap-3 mb-2">
+                      {product.old_price && product.old_price > product.price ? (
+                        <span className="text-xl text-gray-400 line-through">
+                          {formatPrice(product.old_price)}
+                        </span>
+                      ) : null}
+                      <span className="text-3xl font-bold text-gray-900">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      {t('from')} * {language === 'ru' ? 'Цена может измениться в зависимости от комплектации' : 'Price may vary depending on configuration'}
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* Quick Specs */}

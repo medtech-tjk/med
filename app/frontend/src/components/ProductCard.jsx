@@ -27,6 +27,7 @@ const ProductCard = ({ product }) => {
         name_en: product.name_en,
         slug: product.slug,
         price: product.price,
+        price_on_request: product.price_on_request,
         brand: product.brand,
         image: product.main_image || product.mainImage,
         quantity: 1
@@ -113,8 +114,16 @@ const ProductCard = ({ product }) => {
           {/* Price and action */}
           <div className="flex items-center justify-between pt-2 border-t border-gray-100">
             <div>
-              <div className="text-xs text-gray-500">{t('from')}</div>
-              <div className="text-lg md:text-xl text-gray-900">{formatPrice(product.price)}</div>
+              {product.price_on_request ? (
+                <div className="text-sm md:text-base font-semibold text-[#074089]">
+                  {language === 'ru' ? 'Цена по запросу' : 'Price on request'}
+                </div>
+              ) : (
+                <>
+                  <div className="text-xs text-gray-500">{t('from')}</div>
+                  <div className="text-lg md:text-xl text-gray-900">{formatPrice(product.price)}</div>
+                </>
+              )}
             </div>
             <button
               onClick={handleAddToCart}

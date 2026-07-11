@@ -29,6 +29,7 @@ const AdminProductForm = () => {
     third_level_id: '',
     price: 0,
     old_price: 0,
+    price_on_request: false,
     main_image: '',
     images: [],
     description: '',
@@ -118,6 +119,7 @@ const AdminProductForm = () => {
           ...data,
           name_en: data.name_en || '',
           old_price: data.old_price || 0,
+          price_on_request: data.price_on_request || false,
           images: data.images || [],
           description_en: data.description_en || '',
           specs: data.specs || {},
@@ -406,6 +408,8 @@ const AdminProductForm = () => {
 
     const productData = {
       ...form,
+      price: form.price_on_request ? 0 : form.price,
+      old_price: form.price_on_request ? 0 : form.old_price,
       specs: specValues,
       spec_groups: formattedSpecGroups,
       spec_groups_en: formattedSpecGroupsEn,
@@ -561,23 +565,41 @@ const AdminProductForm = () => {
               <p className="text-xs text-gray-500 mt-1">Поддерживаются YouTube и Vimeo ссылки</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Цена (TJS) *</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-gray-700">Цена (TJS) {!form.price_on_request && '*'}</label>
+                <label className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-semibold cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.price_on_request || false}
+                    onChange={(e) => setForm({ ...form, price_on_request: e.target.checked })}
+                    className="w-3.5 h-3.5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span>Цена по запросу</span>
+                </label>
+              </div>
               <input
                 type="number"
-                value={form.price || ''}
+                value={form.price_on_request ? '' : (form.price || '')}
                 onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                required
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
+                  form.price_on_request ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : ''
+                }`}
+                disabled={form.price_on_request}
+                required={!form.price_on_request}
+                placeholder={form.price_on_request ? 'Договорная (по запросу)' : 'Укажите цену'}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Старая цена (TJS)</label>
               <input
                 type="number"
-                value={form.old_price || ''}
+                value={form.price_on_request ? '' : (form.old_price || '')}
                 onChange={(e) => setForm({ ...form, old_price: parseFloat(e.target.value) || 0 })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Для скидки"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
+                  form.price_on_request ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : ''
+                }`}
+                placeholder={form.price_on_request ? 'Недоступно' : 'Для скидки'}
+                disabled={form.price_on_request}
               />
             </div>
             <div>

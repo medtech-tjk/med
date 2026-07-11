@@ -113,9 +113,17 @@ const SubcategoryView = () => {
     const sorted = [...filteredProducts];
     switch (sortBy) {
       case 'price_asc':
-        return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+        return sorted.sort((a, b) => {
+          if (a.price_on_request && !b.price_on_request) return 1;
+          if (!a.price_on_request && b.price_on_request) return -1;
+          return (a.price || 0) - (b.price || 0);
+        });
       case 'price_desc':
-        return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        return sorted.sort((a, b) => {
+          if (a.price_on_request && !b.price_on_request) return 1;
+          if (!a.price_on_request && b.price_on_request) return -1;
+          return (b.price || 0) - (a.price || 0);
+        });
       case 'name_asc':
         return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       case 'newest':

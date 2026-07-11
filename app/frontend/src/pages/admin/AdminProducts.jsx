@@ -76,7 +76,8 @@ const AdminProducts = () => {
     return category?.name || 'Без категории';
   };
 
-  const formatPrice = (price) => {
+  const formatPrice = (price, priceOnRequest = false) => {
+    if (priceOnRequest) return 'По запросу';
     return new Intl.NumberFormat('ru-RU').format(price) + ' TJS';
   };
 
@@ -172,7 +173,7 @@ const AdminProducts = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-gray-600">{getCategoryName(product.category_id)}</td>
-                    <td className="px-6 py-4 font-semibold text-gray-900">{formatPrice(product.price)}</td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">{formatPrice(product.price, product.price_on_request)}</td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
                         {product.is_new && (

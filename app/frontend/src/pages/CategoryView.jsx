@@ -73,9 +73,17 @@ const CategoryView = () => {
     const sorted = [...filteredProducts];
     switch (sortBy) {
       case 'price_asc':
-        return sorted.sort((a, b) => a.price - b.price);
+        return sorted.sort((a, b) => {
+          if (a.price_on_request && !b.price_on_request) return 1;
+          if (!a.price_on_request && b.price_on_request) return -1;
+          return a.price - b.price;
+        });
       case 'price_desc':
-        return sorted.sort((a, b) => b.price - a.price);
+        return sorted.sort((a, b) => {
+          if (a.price_on_request && !b.price_on_request) return 1;
+          if (!a.price_on_request && b.price_on_request) return -1;
+          return b.price - a.price;
+        });
       case 'name':
         return sorted.sort((a, b) => {
           const nameA = language === 'ru' ? (a.name_ru || a.name_en) : (a.name_en || a.name_ru);
