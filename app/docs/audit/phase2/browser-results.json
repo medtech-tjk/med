@@ -1,0 +1,307 @@
+{
+  "checks": [
+    {
+      "path": "/",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/",
+      "width": 768,
+      "documentWidth": 768
+    },
+    {
+      "path": "/",
+      "width": 1024,
+      "documentWidth": 1024
+    },
+    {
+      "path": "/",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/catalog",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/catalog",
+      "width": 768,
+      "documentWidth": 768
+    },
+    {
+      "path": "/catalog",
+      "width": 1024,
+      "documentWidth": 1024
+    },
+    {
+      "path": "/catalog",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/catalog?search=аппарат",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/catalog?search=аппарат",
+      "width": 768,
+      "documentWidth": 768
+    },
+    {
+      "path": "/catalog?search=аппарат",
+      "width": 1024,
+      "documentWidth": 1024
+    },
+    {
+      "path": "/catalog?search=аппарат",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/catalog/test-category",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/catalog/test-category",
+      "width": 768,
+      "documentWidth": 768
+    },
+    {
+      "path": "/catalog/test-category",
+      "width": 1024,
+      "documentWidth": 1024
+    },
+    {
+      "path": "/catalog/test-category",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/product/test-product",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/product/test-product",
+      "width": 768,
+      "documentWidth": 768
+    },
+    {
+      "path": "/product/test-product",
+      "width": 1024,
+      "documentWidth": 1024
+    },
+    {
+      "path": "/product/test-product",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "open-filters",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/dashboard",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/dashboard",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/products",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/products",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/products/new",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/products/new",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/products/test-product/edit",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/products/test-product/edit",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/categories",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/categories",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/slides",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/slides",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/featured",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/featured",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/orders",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/orders",
+      "width": 1440,
+      "documentWidth": 1440
+    },
+    {
+      "path": "/admin/settings",
+      "width": 360,
+      "documentWidth": 360
+    },
+    {
+      "path": "/admin/settings",
+      "width": 1440,
+      "documentWidth": 1440
+    }
+  ],
+  "alignment": {
+    "headerLeft": 60,
+    "footerLeft": 60,
+    "headerWidth": 1320,
+    "footerWidth": 1320
+  },
+  "filters": true,
+  "cartFeedback": true,
+  "gallery": true,
+  "keyboardTabs": true,
+  "adminSessionExpiry": true,
+  "adminSettingsWrite": true,
+  "serverErrorVisible": true,
+  "reducedMotion": {
+    "transition": "0s",
+    "animation": "none"
+  },
+  "fixture": "All API calls intercepted; visibly labeled test catalog; no production writes",
+  "writes": [
+    {
+      "path": "/api/upload/",
+      "method": "POST",
+      "body": "FormData",
+      "token": "offline-test-token"
+    },
+    {
+      "path": "/api/products/",
+      "method": "POST",
+      "body": {
+        "name": "Новый аппарат — тестовая запись",
+        "name_en": "",
+        "slug": "novyy-apparat-testovaya-zapis",
+        "sku": "PRD-REF7SP",
+        "category_id": "test-category",
+        "subcategory_id": "",
+        "third_level_id": "",
+        "price": 1500,
+        "old_price": 0,
+        "price_on_request": false,
+        "main_image": "/logo192.png",
+        "images": [],
+        "description": "",
+        "description_en": "",
+        "specs": {},
+        "spec_groups": [],
+        "spec_groups_en": [],
+        "documents": [],
+        "brand": "",
+        "video_url": "",
+        "in_stock": true,
+        "is_new": false,
+        "is_popular": false
+      },
+      "token": "offline-test-token"
+    },
+    {
+      "path": "/api/products/test-product",
+      "method": "PUT",
+      "body": {
+        "id": "test-product",
+        "name": "Изменённый аппарат — тестовая запись",
+        "name_en": "Diagnostic device — test data",
+        "slug": "izmenyonnyy-apparat-testovaya-zapis",
+        "category_id": "test-category",
+        "price": 12000,
+        "old_price": 14500,
+        "in_stock": true,
+        "is_new": true,
+        "is_popular": true,
+        "brand": "Test brand A",
+        "main_image": "/logo192.png",
+        "images": [
+          "/logo512.png"
+        ],
+        "description": "<p>Описание тестового оборудования.</p>",
+        "specs": {
+          "Тип": "Портативный",
+          "Экран": "Высокое разрешение"
+        },
+        "spec_groups": [],
+        "documents": [],
+        "created_at": "2026-10-29T10:00:00Z",
+        "price_on_request": false,
+        "description_en": "",
+        "spec_groups_en": [],
+        "sku": "TES-C0ULBK"
+      },
+      "token": "offline-test-token"
+    },
+    {
+      "path": "/api/orders/test-order/status",
+      "method": "PATCH",
+      "body": {
+        "status": "processing"
+      },
+      "token": "offline-test-token"
+    },
+    {
+      "path": "/api/settings",
+      "method": "PUT",
+      "body": {
+        "id": "global_settings",
+        "usd_to_tjs_rate": 12.5
+      },
+      "token": "offline-test-token"
+    }
+  ],
+  "errors": []
+}

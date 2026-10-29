@@ -1,0 +1,135 @@
+{
+  "checks": [
+    {
+      "path": "/catalog?search=test",
+      "width": 360,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog?search=test",
+      "width": 768,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog?search=test",
+      "width": 1024,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog?search=test",
+      "width": 1440,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat",
+      "width": 360,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat",
+      "width": 768,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat",
+      "width": 1024,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat",
+      "width": 1440,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub",
+      "width": 360,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub",
+      "width": 768,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub",
+      "width": 1024,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub",
+      "width": 1440,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub/type0",
+      "width": 360,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub/type0",
+      "width": 768,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub/type0",
+      "width": 1024,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    },
+    {
+      "path": "/catalog/cat/sub/type0",
+      "width": 1440,
+      "labelsFullyVisible": true,
+      "noHorizontalOverflow": true,
+      "controlsReachable": true,
+      "brandSelection": true
+    }
+  ],
+  "removedHintsPages": 4,
+  "fixture": "12 long brands, 12 long option labels, nested categories and missing specification values; all API requests intercepted",
+  "errors": []
+}

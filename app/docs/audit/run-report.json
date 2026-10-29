@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "runId": "medtech-2026-10-29",
+  "mode": "refine",
+  "inputRevision": "no-git-local-baseline",
+  "outputRevision": "local-2026-10-29-final",
+  "inputHash": "7d6a772e5f97ef488dc2f919a25542a960ff0ef71d59d9e6fd1d5f5411431e58",
+  "taskStatus": "PARTIAL",
+  "uiReadiness": "NOT_VERIFIED",
+  "checks": [
+    {
+      "id": "browser-routes",
+      "required": true,
+      "status": "PASS",
+      "reason": "33 viewport/route checks plus search, language, cart, XSS, assets and 404 with controlled fixtures",
+      "evidence": [
+        {
+          "artifact": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\docs\\audit\\browser-results.json",
+          "sha256": "6a261539ddd5b245ef65cacd8845fd239fdce15e4d324f7094fa8c4c6cff19c1",
+          "producer": "Microsoft Edge / Playwright",
+          "revision": "local-2026-10-29-final",
+          "origin": "executed"
+        }
+      ]
+    },
+    {
+      "id": "backend-regressions",
+      "required": true,
+      "status": "PASS",
+      "reason": "8 offline security/SEO/API regression tests",
+      "evidence": [
+        {
+          "artifact": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\docs\\audit\\backend-tests.txt",
+          "sha256": "d92b7364949936eab4127a6433aa3fb966d2d73514d19ad02f6b35901a546bc4",
+          "producer": "Python unittest",
+          "revision": "local-2026-10-29-final",
+          "origin": "executed"
+        }
+      ]
+    },
+    {
+      "id": "frontend-regressions",
+      "required": true,
+      "status": "PASS",
+      "reason": "3 Jest unit tests",
+      "evidence": [
+        {
+          "artifact": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\docs\\audit\\frontend-tests.txt",
+          "sha256": "c5412f23b70255c1a783fad31abf48b816ab296c0c463402e890f33508fdf307",
+          "producer": "CRACO / Jest",
+          "revision": "local-2026-10-29-final",
+          "origin": "executed"
+        }
+      ]
+    },
+    {
+      "id": "dependency-audit",
+      "required": true,
+      "status": "FAIL",
+      "reason": "0 critical but 36 unresolved dependency warnings remain",
+      "evidence": [
+        {
+          "artifact": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\docs\\audit\\npm-after.json",
+          "sha256": "da0d885a3bdd37df2cf94f1137ab774a20802a879aead68da18f7eb2a6caa8ef",
+          "producer": "npm audit",
+          "revision": "local-2026-10-29-final",
+          "origin": "executed"
+        }
+      ]
+    },
+    {
+      "id": "production-integrations",
+      "required": false,
+      "status": "NOT_RUN",
+      "reason": "Production database, notifications and publishing were not accessed",
+      "evidence": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "remaining-dependencies",
+      "severity": "major",
+      "blocking": true,
+      "resolved": false,
+      "summary": "36 dependency warnings; remediation of legacy build stack remains",
+      "evidence": [
+        {
+          "artifact": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\docs\\audit\\npm-after.json",
+          "sha256": "da0d885a3bdd37df2cf94f1137ab774a20802a879aead68da18f7eb2a6caa8ef",
+          "producer": "npm audit",
+          "revision": "local-2026-10-29-final",
+          "origin": "executed"
+        }
+      ]
+    }
+  ],
+  "changes": [
+    "Existing address replaced; no relocation blocks on homepage",
+    "Brand favicon in visitor and crawler HTML",
+    "Responsive header and mobile About timeline repaired",
+    "Order access, catalog pricing, validation and HTML escaping repaired",
+    "Product HTML sanitized with DOMPurify",
+    "Compatible npm dependency updates and consistent deployment configuration"
+  ],
+  "limitations": [
+    "See AUDIT.md for remaining findings",
+    "Rendered verification uses controlled fixtures, not production DB",
+    "Carousel keyboard/pause branch reviewed statically only",
+    "No deployment, Search Console or production integration verification",
+    "Overall readiness is not certified while dependency findings and integration gaps remain"
+  ]
+}

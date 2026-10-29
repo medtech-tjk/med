@@ -5,17 +5,8 @@ Run this once to populate the database with initial categories
 """
 import asyncio
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
-from dotenv import load_dotenv
-from pathlib import Path
 import uuid
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
+from database import client, db
 
 # Full catalog tree from fullCatalogTree.js
 CATALOG_TREE = [
@@ -180,6 +171,11 @@ CATALOG_TREE = [
 ]
 
 async def migrate_categories():
+    configured_name=os.environ.get('DB_NAME','').strip()
+    if not configured_name or os.environ.get('MIGRATION_CONFIRM_DB_NAME') != configured_name:
+        raise RuntimeError('Set DB_NAME and MIGRATION_CONFIRM_DB_NAME to the exact intended database before migration')
+    if os.environ.get('APP_ENV','').lower() in {'production','prod'}:
+        raise RuntimeError('This sample category migration cannot run in production')
     """Migrate categories to MongoDB"""
     print("Starting category migration...")
     
@@ -239,4 +235,9 @@ async def migrate_categories():
     print(f"Total subcategories: {sub_count}")
 
 if __name__ == "__main__":
-    asyncio.run(migrate_categories())
+    async def main():
+        try:
+            await migrate_categories()
+        finally:
+            await client.close()
+    asyncio.run(main())

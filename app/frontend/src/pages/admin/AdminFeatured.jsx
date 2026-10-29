@@ -1,3 +1,4 @@
+import { adminFetch as fetch, fetchAllProducts as fetchProductInventory } from '../../lib/adminApi';
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Star, AlertCircle, X, Package, GripVertical, Search, Image } from 'lucide-react';
 
@@ -9,9 +10,7 @@ const AdminFeatured = () => {
   const [error, setError] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -36,11 +35,8 @@ const AdminFeatured = () => {
 
   const fetchAllProducts = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/products/`);
-      if (response.ok) {
-        const data = await response.json();
-        setAllProducts(data);
-      }
+      const data = await fetchProductInventory();
+      setAllProducts(data);
     } catch (err) {
       console.error('Error fetching products');
     }
@@ -64,7 +60,6 @@ const AdminFeatured = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify({
           product_id: productId,
@@ -90,7 +85,7 @@ const AdminFeatured = () => {
     try {
       const response = await fetch(`${API_URL}/api/featured/${productId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -140,11 +135,10 @@ const AdminFeatured = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Популярные товары</h1>
-          <p className="text-gray-500 mt-1">Товары для блока "Популярные товары" на главной странице (сетка 4×2)</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Plus size={18} />
           Добавить товар
@@ -175,7 +169,7 @@ const AdminFeatured = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Поиск по артикулу (SKU) или названию..."
                 />
               </div>
@@ -231,9 +225,6 @@ const AdminFeatured = () => {
           <div className="p-12 text-center">
             <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">Популярных товаров пока нет</p>
-            <p className="text-gray-400 mt-2">
-              Добавьте товары для отображения в блоке "Популярные товары" на главной странице
-            </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
@@ -294,16 +285,7 @@ const AdminFeatured = () => {
         )}
       </div>
 
-      {/* Info */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-900 mb-2">Информация:</h3>
-        <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-          <li>Блок "Популярные товары" отображается на главной странице между слайдером и категориями</li>
-          <li>Сетка 4×2 (8 товаров на страницу)</li>
-          <li>Если товаров больше 8, появятся кнопки навигации ←/→</li>
-          <li>Добавляйте товары через поиск по названию или артикулу (SKU)</li>
-        </ul>
-      </div>
+
     </div>
   );
 };

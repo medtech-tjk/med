@@ -1,3 +1,4 @@
+import FilterOptions from '../components/FilterOptions';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
@@ -5,8 +6,8 @@ import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
-import { useCategories, useProducts, useCategorySpecs } from '../hooks/useApi';
-import { ChevronDown, ChevronUp, SlidersHorizontal, X, ChevronRight, Loader2, PackageCheck } from 'lucide-react';
+import { useCategories, useProductsPage } from '../hooks/useApi';
+import { SlidersHorizontal, X, ChevronRight, Loader2, PackageCheck } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -28,14 +29,15 @@ const Catalog = () => {
   const showAllCategories = !categorySlug && !subcategorySlug && !subSubcategorySlug && !searchQuery;
 
   const [cart, setCart] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 5000000]);
+  const [priceRange, setPriceRange] = useState([0, '']);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [sortBy, setSortBy] = useState('popular');
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [showAllFilters, setShowAllFilters] = useState(false); // Для кнопки "Еще"
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [inStockOnly, setInStockOnly] = useState(false); // Фильтр "В наличии"
+
+  useEffect(() => {setCurrentPage(1);},[searchQuery,priceRange,selectedBrands,sortBy,inStockOnly,itemsPerPage]);
 
   // Get current category, subcategory and sub-subcategory
   const currentCategory = catalogTree.find(c => c.slug === categorySlug);
@@ -132,76 +134,29 @@ const Catalog = () => {
 
   // Определяем активную категорию для отображения фильтров
   const activeCategory = subSubcategorySlug ? currentSubSubcategory : currentSubcategory;
-  const activeSlug = subSubcategorySlug || subcategorySlug;
-
-  // Получаем фильтры для текущей подкатегории из API
-  const { specs: availableFilters } = useCategorySpecs(activeSlug, language);
 
   // Загрузка товаров из API
-  const { products: apiProducts, loading: productsLoading } = useProducts({
+  const { products: apiProducts, loading: productsLoading, error: productsError, total: filteredTotal, pages: totalPages, facets } = useProductsPage({
     category_id: currentCategory?.id,
     subcategory_id: currentSubcategory?.id,
-    search: searchQuery
+    third_level_id: currentSubSubcategory?.id,
+    search: searchQuery,
+    brands: selectedBrands,
+    min_price: Number(priceRange[0]) > 0 ? Number(priceRange[0]) : undefined,
+    max_price: priceRange[1] !== '' ? Number(priceRange[1]) : undefined,
+    in_stock: inStockOnly ? true : undefined,
+    sort: ({'price-asc':'price_asc','price-desc':'price_desc',popular:'popular',new:'new'})[sortBy] || 'popular',
+    page: currentPage,
+    page_size: itemsPerPage,
+    language
   });
 
   const products = apiProducts || [];
-  const brands = [...new Set(products.map(p => p.brand).filter(Boolean))]; // Уникальные бренды из товаров
+  const brands = facets?.brands || [];
 
   // Filter products
-  const filteredProducts = useMemo(() => {
-    let filtered = [...products];
-
-    // Filter by category
-    if (subcategorySlug && currentSubcategory) {
-      filtered = filtered.filter(p => p.subcategory_id === currentSubcategory.id);
-    } else if (categorySlug && currentCategory) {
-      filtered = filtered.filter(p => p.category_id === currentCategory.id);
-    }
-
-    // Note: Search filtering is done on backend with fuzzy search
-    // No need for client-side search filter
-
-    // Filter by price
-    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
-
-    // Filter by in stock
-    if (inStockOnly) {
-      filtered = filtered.filter(p => p.in_stock === true);
-    }
-
-    // Filter by brands
-    if (selectedBrands.length > 0) {
-      filtered = filtered.filter(p => selectedBrands.includes(p.brand));
-    }
-
-    // Sort
-    if (sortBy === 'price-asc') {
-      filtered.sort((a, b) => {
-        if (a.price_on_request && !b.price_on_request) return 1;
-        if (!a.price_on_request && b.price_on_request) return -1;
-        return a.price - b.price;
-      });
-    } else if (sortBy === 'price-desc') {
-      filtered.sort((a, b) => {
-        if (a.price_on_request && !b.price_on_request) return 1;
-        if (!a.price_on_request && b.price_on_request) return -1;
-        return b.price - a.price;
-      });
-    } else if (sortBy === 'popular') {
-      filtered.sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
-    } else if (sortBy === 'new') {
-      filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-    }
-
-    return filtered;
-  }, [products, categorySlug, subcategorySlug, searchQuery, priceRange, selectedBrands, sortBy, inStockOnly]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const filteredProducts = products;
+  const paginatedProducts = products;
 
   const handleAddToCart = (product) => {
     setCart([...cart, product]);
@@ -218,7 +173,7 @@ const Catalog = () => {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 5000000]);
+    setPriceRange([0, '']);
     setSelectedBrands([]);
     setInStockOnly(false);
   };
@@ -251,11 +206,11 @@ const Catalog = () => {
         : (searchQuery ? `${t('searchResults')}: \"${searchQuery}\"` : t('allProducts'));
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         {/* Показываем все категории если нет параметров */}
         {showAllCategories ? (
           <>
@@ -269,7 +224,7 @@ const Catalog = () => {
                   : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-[#074089]'
                   }`}
               >
-                <span className={`w-2.5 h-2.5 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089]'} ${inStockOnly ? '' : 'animate-pulse'}`}></span>
+                <span className={`w-2.5 h-2.5 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089]'} ${inStockOnly ? '' : ''}`}></span>
                 <PackageCheck size={18} className={inStockOnly ? 'text-white' : 'text-[#074089]'} />
                 <span>{language === 'ru' ? 'В наличии' : 'In Stock'}</span>
               </button>
@@ -280,47 +235,7 @@ const Catalog = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {catalogTree.map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/catalog/${category.slug}`}
-                    className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 bg-white"
-                  >
-                    {/* Image */}
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
-                      {category.image ? (
-                        <img
-                          src={category.image}
-                          alt={category.name}
-                          className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                          <span className="text-4xl text-blue-300">📁</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <h3 className="text-xl font-bold mb-2 group-hover:translate-x-2 transition-transform duration-300">
-                        {getLocalizedName(category)}
-                      </h3>
-                      <div className="flex items-center text-sm opacity-90 group-hover:opacity-100 transition-opacity">
-                        <span>{language === 'ru' ? 'Смотреть категорию' : 'View category'}</span>
-                        <ChevronRight size={16} className="ml-1 transform group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-
-                    {/* Count badge - glassmorphism effect */}
-                    {category.children && category.children.length > 0 && (
-                      <div className="absolute top-3 right-3 backdrop-blur-md bg-white/30 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border border-white/20">
-                        {category.children.length} {language === 'ru' ? 'подкатегорий' : 'subcategories'}
-                      </div>
-                    )}
-                  </Link>
-                ))}
+                {catalogTree.map(category => <CategoryCard key={category.id} category={category} headingLevel={2} />)}
               </div>
             )}
           </>
@@ -341,93 +256,32 @@ const Catalog = () => {
               {pageTitle}
             </h1>
 
-            <div className="flex gap-8 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
               {/* Filters Sidebar - показываем только если есть подкатегория */}
               {showFiltersSection && (
-                <aside className={`${showFilters ? 'fixed inset-0 z-50 bg-white p-4 overflow-y-auto' : 'hidden'
-                  } lg:block lg:w-72 flex-shrink-0 lg:sticky lg:top-24 lg:self-start`}>
+                <aside className={`${showFilters ? 'block' : 'hidden'
+                  } filter-sidebar catalog-filter-panel w-full lg:block lg:w-64 flex-shrink-0 lg:self-start bg-white border border-slate-200 rounded-xl p-5`}>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-6 lg:hidden">
                       <h2 className="text-xl font-bold">{t('filters')}</h2>
-                      <button onClick={() => setShowFilters(false)}>
+                      <button aria-label={language === 'ru' ? 'Закрыть фильтры' : 'Close filters'} onClick={() => setShowFilters(false)}>
                         <X size={24} />
                       </button>
                     </div>
 
-                    {/* Динамические фильтры */}
-                    {availableFilters.slice(0, showAllFilters ? availableFilters.length : 3).map((filter) => (
-                      <div key={filter.key} className="bg-white p-5 rounded-lg shadow-md">
-                        <h3 className="font-semibold mb-4 text-gray-900">{filter.label}</h3>
-
-                        {filter.type === 'range' && (
-                          <div className="space-y-3">
-                            <input
-                              type="number"
-                              placeholder="От"
-                              className="w-full px-3 py-2 border rounded-lg text-sm"
-                            />
-                            <input
-                              type="number"
-                              placeholder="До"
-                              className="w-full px-3 py-2 border rounded-lg text-sm"
-                            />
-                          </div>
-                        )}
-
-                        {filter.type === 'select' && filter.adminManaged && (
-                          <div className="space-y-2">
-                            {(filter.key === 'brand' ? brands : ['Россия', 'Китай', 'США', 'Германия', 'Япония']).map((option) => (
-                              <label key={option} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                                <input
-                                  type="checkbox"
-                                  className="w-4 h-4 text-[#074089] rounded"
-                                />
-                                <span className="text-sm">{option}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-
-                        {filter.type === 'checkbox' && filter.options && (
-                          <div className="space-y-2">
-                            {filter.options.map((option) => (
-                              <label key={option} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                                <input
-                                  type="checkbox"
-                                  className="w-4 h-4 text-[#074089] rounded"
-                                />
-                                <span className="text-sm">{option}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
+                    <fieldset className="border-b border-slate-100 pb-5">
+                      <legend className="font-semibold text-sm text-slate-800 mb-3">{t('price')} · TJS</legend>
+                      <div className="grid grid-cols-2 gap-2">
+                        <label className="text-xs text-slate-600">{t('from')}<input type="number" min="0" value={priceRange[0]} onChange={e=>setPriceRange([e.target.value,priceRange[1]])} className="mt-1 w-full px-3 py-2 border rounded-lg" /></label>
+                        <label className="text-xs text-slate-600">{t('to')}<input type="number" min="0" value={priceRange[1]} onChange={e=>setPriceRange([priceRange[0],e.target.value])} placeholder="—" className="mt-1 w-full px-3 py-2 border rounded-lg" /></label>
                       </div>
-                    ))}
-
-                    {/* Show More Filters Button */}
-                    {availableFilters.length > 3 && (
-                      <button
-                        onClick={() => setShowAllFilters(!showAllFilters)}
-                        className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                      >
-                        {showAllFilters ? (
-                          <>
-                            <ChevronUp size={18} />
-                            {t('hideFilters')}
-                          </>
-                        ) : (
-                          <>
-                            <ChevronDown size={18} />
-                            {t('moreFilters')} ({availableFilters.length - 3})
-                          </>
-                        )}
-                      </button>
-                    )}
-
+                    </fieldset>
+                    {brands.length > 0 && <FilterOptions label={t('brand')} options={brands} value={selectedBrands} onChange={setSelectedBrands} />}
+                    <label className="flex items-center gap-3 text-sm min-h-[44px] cursor-pointer"><input type="checkbox" checked={inStockOnly} onChange={e=>setInStockOnly(e.target.checked)} className="w-4 h-4"/>{language === 'ru' ? 'Только в наличии' : 'In stock only'}</label>
                     {/* Clear Filters */}
                     <button
                       onClick={clearFilters}
-                      className="w-full py-3 text-sm text-[#074089] hover:text-#2C5BB4 font-semibold bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                      className="w-full py-3 text-sm text-[#074089] hover:text-[#074089] font-semibold bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                     >
                       {t('clearFilters')}
                     </button>
@@ -436,19 +290,19 @@ const Catalog = () => {
               )}
 
               {/* Products Grid */}
-              <div className={`${showFiltersSection ? "flex-1" : "w-full"} min-h-[calc(100vh-200px)]`}>
+              <div className={`${showFiltersSection ? "flex-1" : "w-full"} catalog-results min-h-[calc(100vh-200px)]`}>
                 {/* Toolbar */}
-                <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="catalog-toolbar bg-white p-4 rounded-lg mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => setShowFilters(true)}
+                      aria-expanded={showFilters} onClick={() => setShowFilters(value=>!value)}
                       className="lg:hidden flex items-center gap-2 px-4 py-2 bg-[#074089] text-white rounded-lg hover:bg-[#2C5BB4] transition-colors"
                     >
                       <SlidersHorizontal size={18} />
                       {t('filters')}
                     </button>
                     <span className="text-gray-600">
-                      {t('foundProducts')} {filteredProducts.length} {t('productsWord')}
+                      {t('foundProducts')} {filteredTotal} {t('productsWord')}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -483,7 +337,7 @@ const Catalog = () => {
                     {selectedBrands.map((brand) => (
                       <div
                         key={brand}
-                        className="bg-blue-100 text-#2C5BB4 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                        className="bg-blue-100 text-[#074089] px-3 py-1 rounded-full text-sm flex items-center gap-2"
                       >
                         {brand}
                         <button onClick={() => toggleBrand(brand)} className="hover:text-blue-900">
@@ -497,9 +351,9 @@ const Catalog = () => {
                 {/* Products - Block 2: Product Grid */}
                 <section className="mb-12">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">{searchQuery ? t('searchResults') : t('popularProducts')}</h2>
-                  {paginatedProducts.length > 0 ? (
+                  {productsLoading ? <div role="status" className="py-16 text-center text-slate-600"><Loader2 className="animate-spin mx-auto mb-3 text-[#074089]" size={28}/>{language === 'ru' ? 'Загружаем оборудование…' : 'Loading equipment…'}</div> : productsError ? <div role="alert" className="p-6 rounded-xl border border-red-200 bg-red-50 text-red-800">{language === 'ru' ? 'Не удалось загрузить товары. Повторите поиск или позвоните нам: +992 93 333 96 39.' : 'Unable to load products. Search again or call +992 93 333 96 39.'}</div> : paginatedProducts.length > 0 ? (
                     <>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
                         {paginatedProducts.map((product) => (
                           <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
                         ))}
@@ -678,7 +532,7 @@ const Catalog = () => {
             </div>
           </>
         )}
-      </div>
+      </main>
 
       <Footer />
     </div>

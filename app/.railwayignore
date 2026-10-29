@@ -1,0 +1,9 @@
+**/admin_token.txt
+**/.env
+**/.env.local
+.venv*/
+**/__pycache__/
+docs/audit/
+tests/
+frontend/node_modules/
+frontend/build/

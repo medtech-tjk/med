@@ -18,7 +18,7 @@ export const CurrencyProvider = ({ children }) => {
   // Fetch exchange rate from API
   const fetchExchangeRate = async () => {
     try {
-      const response = await fetch(`${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}/api/settings`);
+      const response = await fetch(`${''}/api/settings`);
       if (response.ok) {
         const data = await response.json();
         setExchangeRate(data.usd_to_tjs_rate || 11.2);

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "module": true
+  },
+  {
+    "path": "/src/index.js",
+    "status": 200,
+    "module": true
+  },
+  {
+    "path": "/src/App.js",
+    "status": 200,
+    "module": true
+  },
+  {
+    "path": "/src/context/LanguageContext.js",
+    "status": 200,
+    "module": true
+  }
+]

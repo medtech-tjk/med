@@ -1,3 +1,5 @@
+import { sanitizeDescription } from '../lib/sanitize';
+import { readCart } from '../lib/cart';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -18,32 +20,28 @@ const ProductDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+  const [tabMotion, setTabMotion] = useState(false);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [cartCount, setCartCount] = useState(0);
 
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
+  useEffect(() => {setCurrentImageIndex(0);setQuantity(1);setActiveTab('description');setTabMotion(false);},[slug]);
 
   // Синхронизация корзины
   useEffect(() => {
     const updateCartCount = () => {
-      const cart = localStorage.getItem('cart');
-      if (cart) {
-        const items = JSON.parse(cart);
-        setCartCount(items.length);
-      } else {
-        setCartCount(0);
-      }
+      setCartCount(readCart().length);
     };
 
     updateCartCount();
     window.addEventListener('cartUpdated', updateCartCount);
-    const interval = setInterval(updateCartCount, 500);
+    window.addEventListener('storage', updateCartCount);
 
     return () => {
       window.removeEventListener('cartUpdated', updateCartCount);
-      clearInterval(interval);
+      window.removeEventListener('storage', updateCartCount);
     };
   }, []);
 
@@ -70,10 +68,11 @@ const ProductDetail = () => {
 
   // Загрузка продукта
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/api/products/slug/${slug}`);
+        const response = await fetch(`${API_URL}/api/products/slug/${slug}`,{signal:controller.signal});
         if (response.ok) {
           const data = await response.json();
           setProduct(data);
@@ -81,16 +80,18 @@ const ProductDetail = () => {
           setProduct(null);
         }
       } catch (err) {
+        if (controller.signal.aborted) return;
         console.error('Error loading product:', err);
         setProduct(null);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
     if (slug) {
       fetchProduct();
     }
+    return () => controller.abort();
   }, [slug, API_URL]);
 
   // Найти категорию и подкатегорию для breadcrumbs
@@ -163,27 +164,7 @@ const ProductDetail = () => {
         "image": mainImage,
         "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
         "sku": product.sku || product.id,
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.8",
-          "reviewCount": "1",
-          "bestRating": "5",
-          "worstRating": "1"
-        },
-        "review": {
-          "@type": "Review",
-          "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5"
-          },
-          "author": {
-            "@type": "Organization",
-            "name": "Tib Technology"
-          },
-          "reviewBody": `Профессиональное медицинское оборудование ${name} от Tib Technology.`
-        },
-        "offers": {
+        "offers": !product.price_on_request && Number.isFinite(Number(product.price)) && Number(product.price) > 0 ? {
           "@type": "Offer",
           "url": `https://medtech.tj/product/${product.slug}`,
           "priceCurrency": "TJS",
@@ -195,42 +176,7 @@ const ProductDetail = () => {
             "@type": "Organization",
             "name": "Tib Technology"
           },
-          "hasMerchantReturnPolicy": {
-            "@type": "MerchantReturnPolicy",
-            "applicableCountry": "TJ",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-            "merchantReturnDays": 14,
-            "returnMethod": "https://schema.org/ReturnByMail",
-            "returnFees": "https://schema.org/FreeReturn"
-          },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingDestination": {
-              "@type": "DefinedRegion",
-              "addressCountry": "TJ"
-            },
-            "shippingRate": {
-              "@type": "MonetaryAmount",
-              "value": "0",
-              "currency": "TJS"
-            },
-            "deliveryTime": {
-              "@type": "ShippingDeliveryTime",
-              "handlingTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 1,
-                "maxValue": 3,
-                "unitCode": "DAY"
-              },
-              "transitTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 1,
-                "maxValue": 7,
-                "unitCode": "DAY"
-              }
-            }
-          }
-        }
+        } : undefined
       };
 
       jsonLd.textContent = JSON.stringify(structuredData);
@@ -283,10 +229,10 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <Loader2 className="animate-spin w-12 h-12 text-[#074089] mx-auto" />
           <p className="mt-4 text-gray-600">{language === 'ru' ? 'Загрузка...' : 'Loading...'}</p>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -297,7 +243,7 @@ const ProductDetail = () => {
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
         <FloatingCart />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <div className="text-6xl mb-4">📦</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {language === 'ru' ? 'Товар не найден' : 'Product not found'}
@@ -308,7 +254,7 @@ const ProductDetail = () => {
           <Link to="/catalog" className="inline-block bg-[#074089] hover:bg-[#2C5BB4] text-white font-semibold px-6 py-3 rounded-lg transition-colors">
             {language === 'ru' ? 'Вернуться в каталог' : 'Back to catalog'}
           </Link>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -321,11 +267,11 @@ const ProductDetail = () => {
   ].filter(Boolean);
 
   if (images.length === 0) {
-    images.push('/placeholder-product.png');
+    images.push('/placeholder.svg');
   }
 
   const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cart = readCart();
 
     // Проверяем, есть ли уже такой товар в корзине
     const existingIndex = cart.findIndex(item => item.id === product.id);
@@ -359,7 +305,7 @@ const ProductDetail = () => {
 
   const handleRequestQuote = () => {
     // Добавляем товар в корзину и переходим к оформлению заявки
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cart = readCart();
 
     // Проверяем, есть ли уже такой товар в корзине
     const existingIndex = cart.findIndex(item => item.id === product.id);
@@ -417,9 +363,9 @@ const ProductDetail = () => {
       <Header cartCount={cartCount} />
       <FloatingCart />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
+        <div className="flex items-center content-start gap-2 text-sm text-gray-600 mb-6 flex-wrap min-h-[48px] sm:min-h-[24px]">
           <Link to="/" className="hover:text-[#074089]">{language === 'ru' ? 'Главная' : 'Home'}</Link>
           <span>/</span>
           <Link to="/catalog" className="hover:text-[#074089]">{language === 'ru' ? 'Каталог' : 'Catalog'}</Link>
@@ -440,27 +386,32 @@ const ProductDetail = () => {
         </div>
 
         {/* Product Main Section */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+        <div className="product-detail-card bg-white overflow-hidden mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Gallery Section */}
-            <div className="p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
+            <div className="product-gallery p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
               {/* Main Image */}
-              <div className="relative mb-4 bg-gray-50 rounded-xl overflow-hidden aspect-square">
+              <div className="product-gallery-main relative mb-4 rounded-xl overflow-hidden">
                 <img
                   src={getImageUrl(images[currentImageIndex])}
                   alt={product.name}
+                  loading="eager"
+                  fetchPriority="high"
+                  onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.svg';}}
                   className="w-full h-full object-contain"
                 />
                 {images.length > 1 && (
                   <>
                     <button
                       onClick={prevImage}
+                      aria-label={language === 'ru' ? 'Предыдущее фото' : 'Previous image'}
                       className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
                     >
                       <ChevronLeft size={20} />
                     </button>
                     <button
                       onClick={nextImage}
+                      aria-label={language === 'ru' ? 'Следующее фото' : 'Next image'}
                       className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
                     >
                       <ChevronRight size={20} />
@@ -482,7 +433,7 @@ const ProductDetail = () => {
                       </span>
                     )}
                     {product.old_price > 0 && product.old_price > product.price && (
-                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                      <span className="bg-red-700 text-white text-xs font-bold px-2 py-1 rounded">
                         -{Math.round((1 - product.price / product.old_price) * 100)}%
                       </span>
                     )}
@@ -497,6 +448,8 @@ const ProductDetail = () => {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
+                      aria-label={`${language === 'ru' ? 'Фото' : 'Image'} ${index+1}`}
+                      aria-pressed={index === currentImageIndex}
                       className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${index === currentImageIndex
                         ? 'border-[#074089] ring-2 ring-[#074089]/30'
                         : 'border-gray-200 hover:border-[#074089]'
@@ -510,7 +463,7 @@ const ProductDetail = () => {
             </div>
 
             {/* Product Info Section */}
-            <div className="p-6 lg:p-8">
+            <div className="p-5 sm:p-8 lg:p-10 min-w-0">
               {/* SKU and brand */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -576,9 +529,9 @@ const ProductDetail = () => {
               {/* Quick Specs */}
               {hasSpecs && (
                 <div className="mb-6">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                     {Object.entries(language === 'en' && product.specs_en && Object.keys(product.specs_en).length > 0 ? product.specs_en : product.specs).slice(0, 4).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-gray-100">
+                      <div key={key} className="flex flex-wrap justify-between gap-2 py-2 border-b border-gray-100 min-w-0">
                         <span className="text-gray-500">{key}:</span>
                         <span className="font-medium text-gray-900">{value}</span>
                       </div>
@@ -595,6 +548,8 @@ const ProductDetail = () => {
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    aria-label={language === 'ru' ? 'Уменьшить количество' : 'Decrease quantity'}
+                    disabled={quantity === 1}
                     className="p-2 hover:bg-gray-100 transition-colors rounded-l-lg"
                   >
                     <Minus size={16} />
@@ -602,6 +557,7 @@ const ProductDetail = () => {
                   <span className="px-4 font-semibold min-w-[40px] text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
+                    aria-label={language === 'ru' ? 'Увеличить количество' : 'Increase quantity'}
                     className="p-2 hover:bg-gray-100 transition-colors rounded-r-lg"
                   >
                     <Plus size={16} />
@@ -613,12 +569,12 @@ const ProductDetail = () => {
               <div className="space-y-3">
                 <button
                   onClick={handleRequestQuote}
-                  className="w-full bg-[#074089] hover:bg-[#2C5BB4] text-white font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl"
+                  className="ui-button w-full bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-4 px-5 flex items-center justify-center gap-2"
                 >
                   <FileText size={20} />
                   {language === 'ru' ? 'Получить коммерческое предложение' : 'Get a quote'}
                 </button>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="product-detail-actions grid grid-cols-2 gap-3">
                   <button
                     onClick={handleAddToCart}
                     className="bg-white border-2 border-[#074089] text-[#074089] hover:bg-[#074089] hover:text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all"
@@ -648,13 +604,24 @@ const ProductDetail = () => {
         </div>
 
         {/* Tabs Section */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+        <div className="product-detail-card bg-white overflow-hidden mb-8">
           {/* Tab Headers */}
-          <div className="flex border-b border-gray-200 overflow-x-auto">
+          <div role="tablist" aria-label={language === 'ru' ? 'Информация о товаре' : 'Product information'} className="product-tabs">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                id={`product-tab-${tab.id}`}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls="product-panel"
+                tabIndex={activeTab === tab.id ? 0 : -1}
+                onClick={event => {setTabMotion(event.detail > 0);setActiveTab(tab.id);}}
+                onKeyDown={event => {
+                  const current = tabs.findIndex(item=>item.id===tab.id);
+                  const next = event.key === 'ArrowRight' ? (current+1)%tabs.length : event.key === 'ArrowLeft' ? (current+tabs.length-1)%tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length-1 : null;
+                  if(next === null) return;
+                  event.preventDefault();setTabMotion(false);setActiveTab(tabs[next].id);document.getElementById(`product-tab-${tabs[next].id}`)?.focus();
+                }}
                 className={`px-6 py-4 font-semibold whitespace-nowrap transition-all ${activeTab === tab.id
                   ? 'border-b-2 border-[#074089] text-[#074089] bg-[#074089]/5'
                   : 'text-gray-600 hover:text-[#074089] hover:bg-gray-50'
@@ -666,13 +633,13 @@ const ProductDetail = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="p-6 lg:p-8">
+          <div key={activeTab} id="product-panel" role="tabpanel" aria-labelledby={`product-tab-${activeTab}`} tabIndex={0} className={`p-5 sm:p-8 ${tabMotion ? 'content-enter' : ''}`}>
             {activeTab === 'description' && (
               <div className="prose max-w-none">
                 {(getLocalizedDescription(product) || product.description) ? (
                   <div
                     className="text-gray-700 leading-relaxed space-y-4"
-                    dangerouslySetInnerHTML={{ __html: getLocalizedDescription(product) || product.description }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeDescription(getLocalizedDescription(product) || product.description) }}
                   />
                 ) : (
                   <p className="text-gray-500">
@@ -687,9 +654,9 @@ const ProductDetail = () => {
                 {/* Встроенные характеристики (старый формат specs) - показываем ПЕРВЫМИ */}
                 {hasSpecs && (
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                       {language === 'ru' ? 'Характеристики' : 'Specifications'}
-                    </h3>
+                    </h2>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <tbody>
@@ -708,9 +675,9 @@ const ProductDetail = () => {
                 {/* Группы характеристик с заголовками (добавленные админом) - показываем ПОСЛЕ встроенных */}
                 {hasSpecGroups && currentSpecGroups.map((group, index) => (
                   <div key={index}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                       {group.title}
-                    </h3>
+                    </h2>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <tbody>
@@ -824,7 +791,7 @@ const ProductDetail = () => {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

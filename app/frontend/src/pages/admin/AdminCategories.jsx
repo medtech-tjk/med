@@ -1,3 +1,4 @@
+import { adminFetch as fetch } from '../../lib/adminApi';
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, ChevronDown, ChevronRight, Save, X, AlertCircle, FolderTree, Upload, Loader2, Image, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
 
@@ -27,9 +28,7 @@ const AdminCategories = () => {
   const [categoryForm, setCategoryForm] = useState({ name: '', name_en: '', slug: '', image: '', description: '', description_en: '', order: 0 });
   const [subcategoryForm, setSubcategoryForm] = useState({ name: '', name_en: '', slug: '', image: '', description: '', description_en: '', order: 0 });
   const [thirdLevelForm, setThirdLevelForm] = useState({ name: '', name_en: '', slug: '', image: '', description: '', description_en: '', order: 0 });
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   useEffect(() => {
     fetchCategories();
@@ -84,7 +83,6 @@ const AdminCategories = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(categoryIds)
       });
@@ -111,7 +109,6 @@ const AdminCategories = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(categoryIds)
       });
@@ -137,7 +134,6 @@ const AdminCategories = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(subcategoryIds)
       });
@@ -163,7 +159,6 @@ const AdminCategories = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(subcategoryIds)
       });
@@ -189,7 +184,7 @@ const AdminCategories = () => {
     try {
       const response = await fetch(`${API_URL}/api/upload/`, {
         method: 'POST',
-        headers: { 'X-Admin-Token': token },
+        headers: {},
         body: formData
       });
 
@@ -224,7 +219,6 @@ const AdminCategories = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(categoryForm)
       });
@@ -251,7 +245,6 @@ const AdminCategories = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify({ ...subcategoryForm, parent_id: currentParentId })
       });
@@ -278,7 +271,6 @@ const AdminCategories = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify({ ...thirdLevelForm, parent_id: currentSubcategoryId })
       });
@@ -300,7 +292,7 @@ const AdminCategories = () => {
     try {
       const response = await fetch(`${API_URL}/api/categories/${categoryId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -319,7 +311,7 @@ const AdminCategories = () => {
     try {
       const response = await fetch(`${API_URL}/api/categories/subcategories/${subcategoryId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -338,7 +330,7 @@ const AdminCategories = () => {
     try {
       const response = await fetch(`${API_URL}/api/categories/third-level/${categoryId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -507,7 +499,6 @@ const AdminCategories = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Управление категориями</h1>
-          <p className="text-gray-500 mt-1">3 уровня вложенности: Категория → Подкатегория → Тип</p>
         </div>
         <button
           onClick={() => {
@@ -515,7 +506,7 @@ const AdminCategories = () => {
             setCategoryForm({ name: '', slug: '', image: '', order: 0 });
             setShowCategoryForm(true);
           }}
-          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+          className="w-full sm:w-auto bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
           <Plus size={18} />
           Добавить категорию
@@ -545,7 +536,7 @@ const AdminCategories = () => {
                   type="text"
                   value={categoryForm.name}
                   onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value, slug: generateSlug(e.target.value) })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Например: Ультразвуковая диагностика"
                 />
               </div>
@@ -555,7 +546,7 @@ const AdminCategories = () => {
                   type="text"
                   value={categoryForm.name_en || ''}
                   onChange={(e) => setCategoryForm({ ...categoryForm, name_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Category name in English"
                 />
               </div>
@@ -565,7 +556,7 @@ const AdminCategories = () => {
                   type="text"
                   value={categoryForm.slug}
                   onChange={(e) => setCategoryForm({ ...categoryForm, slug: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] bg-gray-50"
                 />
               </div>
               <ImageUploadField
@@ -579,7 +570,7 @@ const AdminCategories = () => {
                 <textarea
                   value={categoryForm.description || ''}
                   onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[100px]"
                   placeholder="Описание категории для отображения на сайте..."
                 />
               </div>
@@ -588,7 +579,7 @@ const AdminCategories = () => {
                 <textarea
                   value={categoryForm.description_en || ''}
                   onChange={(e) => setCategoryForm({ ...categoryForm, description_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[100px]"
                   placeholder="Category description in English..."
                 />
               </div>
@@ -598,7 +589,7 @@ const AdminCategories = () => {
                   type="number"
                   value={categoryForm.order}
                   onChange={(e) => setCategoryForm({ ...categoryForm, order: parseInt(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 />
               </div>
             </div>
@@ -606,7 +597,7 @@ const AdminCategories = () => {
               <button onClick={closeCategoryForm} className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
                 Отмена
               </button>
-              <button onClick={handleSaveCategory} disabled={!categoryForm.name} className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2">
+              <button onClick={handleSaveCategory} disabled={!categoryForm.name} className="flex-1 py-2 px-4 bg-[#074089] text-white rounded-lg hover:bg-[#052c5e] disabled:opacity-50 flex items-center justify-center gap-2">
                 <Save size={18} />
                 Сохранить
               </button>
@@ -630,7 +621,7 @@ const AdminCategories = () => {
                   type="text"
                   value={subcategoryForm.name}
                   onChange={(e) => setSubcategoryForm({ ...subcategoryForm, name: e.target.value, slug: generateSlug(e.target.value) })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Например: УЗИ датчики"
                 />
               </div>
@@ -640,7 +631,7 @@ const AdminCategories = () => {
                   type="text"
                   value={subcategoryForm.name_en || ''}
                   onChange={(e) => setSubcategoryForm({ ...subcategoryForm, name_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Subcategory name in English"
                 />
               </div>
@@ -664,7 +655,7 @@ const AdminCategories = () => {
                 <textarea
                   value={subcategoryForm.description || ''}
                   onChange={(e) => setSubcategoryForm({ ...subcategoryForm, description: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[100px]"
                   placeholder="Описание подкатегории для отображения на сайте..."
                 />
               </div>
@@ -673,7 +664,7 @@ const AdminCategories = () => {
                 <textarea
                   value={subcategoryForm.description_en || ''}
                   onChange={(e) => setSubcategoryForm({ ...subcategoryForm, description_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[100px]"
                   placeholder="Subcategory description in English..."
                 />
               </div>
@@ -691,7 +682,7 @@ const AdminCategories = () => {
               <button onClick={closeSubcategoryForm} className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
                 Отмена
               </button>
-              <button onClick={handleSaveSubcategory} disabled={!subcategoryForm.name} className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2">
+              <button onClick={handleSaveSubcategory} disabled={!subcategoryForm.name} className="flex-1 py-2 px-4 bg-[#074089] text-white rounded-lg hover:bg-[#052c5e] disabled:opacity-50 flex items-center justify-center gap-2">
                 <Save size={18} />
                 Сохранить
               </button>
@@ -715,7 +706,7 @@ const AdminCategories = () => {
                   type="text"
                   value={thirdLevelForm.name}
                   onChange={(e) => setThirdLevelForm({ ...thirdLevelForm, name: e.target.value, slug: generateSlug(e.target.value) })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Например: Линейные"
                 />
               </div>
@@ -725,7 +716,7 @@ const AdminCategories = () => {
                   type="text"
                   value={thirdLevelForm.name_en || ''}
                   onChange={(e) => setThirdLevelForm({ ...thirdLevelForm, name_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Name in English"
                 />
               </div>
@@ -749,7 +740,7 @@ const AdminCategories = () => {
                 <textarea
                   value={thirdLevelForm.description || ''}
                   onChange={(e) => setThirdLevelForm({ ...thirdLevelForm, description: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[80px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[80px]"
                   placeholder="Описание..."
                 />
               </div>
@@ -758,7 +749,7 @@ const AdminCategories = () => {
                 <textarea
                   value={thirdLevelForm.description_en || ''}
                   onChange={(e) => setThirdLevelForm({ ...thirdLevelForm, description_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[80px]"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[80px]"
                   placeholder="Description in English..."
                 />
               </div>
@@ -776,7 +767,7 @@ const AdminCategories = () => {
               <button onClick={closeThirdLevelForm} className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
                 Отмена
               </button>
-              <button onClick={handleSaveThirdLevel} disabled={!thirdLevelForm.name} className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2">
+              <button onClick={handleSaveThirdLevel} disabled={!thirdLevelForm.name} className="flex-1 py-2 px-4 bg-[#074089] text-white rounded-lg hover:bg-[#052c5e] disabled:opacity-50 flex items-center justify-center gap-2">
                 <Save size={18} />
                 Сохранить
               </button>
@@ -791,7 +782,6 @@ const AdminCategories = () => {
           <div className="p-12 text-center">
             <FolderTree className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">Категорий пока нет</p>
-            <p className="text-gray-400">Добавьте первую категорию</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
@@ -983,18 +973,7 @@ const AdminCategories = () => {
         )}
       </div>
 
-      {/* Info block */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-900 mb-2">Структура каталога (3 уровня):</h3>
-        <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-          <li><strong>1 уровень:</strong> Основные категории (Ультразвуковая диагностика, Эндоскопия, ...)</li>
-          <li><strong>2 уровень:</strong> Подкатегории (УЗИ аппараты, УЗИ датчики, ...)</li>
-          <li><strong>3 уровень:</strong> Типы/виды (Линейные, Конвексные, Секторные фазированные, ...)</li>
-        </ul>
-        <p className="text-sm text-blue-700 mt-2">
-          <strong>Рекомендуемый размер изображений:</strong> 600×400px, формат JPG/PNG/WebP
-        </p>
-      </div>
+
     </div>
   );
 };

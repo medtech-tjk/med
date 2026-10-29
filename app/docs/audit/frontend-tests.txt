@@ -1,0 +1,12 @@
+
+> frontend@0.1.0 test
+> craco test --watch=false --runInBand
+
+PASS src/lib/sanitize.test.js
+PASS src/lib/cart.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.975 s, estimated 1 s
+Ran all test suites.

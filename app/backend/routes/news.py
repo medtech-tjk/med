@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent
 load_dotenv(ROOT_DIR / '.env')
 from pydantic import BaseModel, Field
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 import os
 from typing import List, Optional
@@ -15,9 +15,6 @@ import uuid
 router = APIRouter(prefix="/api/news", tags=["News"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 class NewsSlide(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -60,6 +57,8 @@ async def create_news_slide(slide: NewsSlide):
 async def update_news_slide(slide_id: str, slide: NewsSlide):
     """Update a news slide (Admin only)"""
     slide_dict = slide.dict()
+    slide_dict['id'] = slide_id
+    slide_dict.pop('created_at', None)
     slide_dict['updated_at'] = datetime.now(timezone.utc)
     
     result = await db.news_slides.update_one(
@@ -67,7 +66,7 @@ async def update_news_slide(slide_id: str, slide: NewsSlide):
         {"$set": slide_dict}
     )
     
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="News slide not found")
     
     return {"message": "News slide updated successfully"}
@@ -90,7 +89,7 @@ async def update_slide_order(slide_id: str, order: int):
         {"$set": {"order": order, "updated_at": datetime.now(timezone.utc)}}
     )
     
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="News slide not found")
     
     return {"message": "Slide order updated"}

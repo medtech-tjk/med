@@ -1,10 +1,12 @@
+import FilterOptions from '../components/FilterOptions';
+import { readCart } from '../lib/cart';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
-import { useCategories, useProducts, useCategorySpecs } from '../hooks/useApi';
+import { useCategories, useProductsPage, useCategorySpecs } from '../hooks/useApi';
 import { ChevronRight, Loader2, Filter, X, SlidersHorizontal, PackageCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -26,7 +28,7 @@ const SubcategoryView = () => {
   // Load cart from localStorage
   useEffect(() => {
     const loadCart = () => {
-      const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const savedCart = readCart();
       setCart(savedCart);
     };
     loadCart();
@@ -53,15 +55,21 @@ const SubcategoryView = () => {
   // Получить фильтры для этой подкатегории из API
   const { specs: apiFilters } = useCategorySpecs(subcategorySlug, language);
   const filters = apiFilters || [];
+  useEffect(()=>setActiveFilters({}),[language,subcategorySlug]);
 
   // Загрузка товаров
-  const { products, loading: productsLoading } = useProducts({
-    subcategory_id: subcategory?.id,
-    brand: activeFilters.brand || undefined
+  const { products, loading: productsLoading, total, pages: totalPages, facets } = useProductsPage({
+    category_id: category?.id, subcategory_id: subcategory?.id,
+    min_price: priceRange.min ? Number(priceRange.min) : undefined,
+    max_price: priceRange.max ? Number(priceRange.max) : undefined,
+    in_stock: inStockOnly ? true : undefined,
+    sort: ({popular:'popular',price_asc:'price_asc',price_desc:'price_desc',name_asc:'name',newest:'new'})[sortBy] || 'popular',
+    page: currentPage, page_size: itemsPerPage, language, spec_filters: activeFilters
   });
 
   // Получить уникальные бренды из товаров
   const brands = useMemo(() => {
+    if (facets?.brands) return facets.brands.filter(brand => !['all','all brands','все бренды'].includes(brand.trim().toLowerCase()));
     const unique = new Map();
     products.forEach(p => {
       if (!p.brand || typeof p.brand !== 'string') return;
@@ -81,105 +89,36 @@ const SubcategoryView = () => {
       }
     });
     return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
-  }, [products]);
+  }, [products, facets]);
 
   // Фильтрация товаров
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      // Фильтр по цене
-      if (priceRange.min && product.price < parseFloat(priceRange.min)) return false;
-      if (priceRange.max && product.price > parseFloat(priceRange.max)) return false;
-
-      // Фильтр по наличию
-      if (inStockOnly && product.in_stock === false) return false;
-
-      // Фильтр по активным чекбоксам
-      for (const [key, values] of Object.entries(activeFilters)) {
-        if (key === 'brand' || key === 'price') continue;
-        if (values && values.length > 0) {
-          const productValue = product.specs?.[key] || product[key];
-          if (productValue && !values.includes(productValue)) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    });
-  }, [products, priceRange, activeFilters, inStockOnly]);
-
-  // Сортировка товаров
-  const sortedProducts = useMemo(() => {
-    const sorted = [...filteredProducts];
-    switch (sortBy) {
-      case 'price_asc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return (a.price || 0) - (b.price || 0);
-        });
-      case 'price_desc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return (b.price || 0) - (a.price || 0);
-        });
-      case 'name_asc':
-        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-      default:
-        return sorted;
-    }
-  }, [filteredProducts, sortBy]);
-
-  // Пагинация
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return sortedProducts.slice(start, start + itemsPerPage);
-  }, [sortedProducts, currentPage, itemsPerPage]);
+  const filteredProducts = products;
+  const sortedProducts = products;
+  const paginatedProducts = products;
 
   // Сброс страницы при изменении фильтров
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeFilters, priceRange, sortBy, itemsPerPage]);
-
-  const handleFilterChange = (filterKey, value, isChecked) => {
-    setActiveFilters(prev => {
-      const current = prev[filterKey] || [];
-      if (isChecked) {
-        return { ...prev, [filterKey]: [...current, value] };
-      } else {
-        return { ...prev, [filterKey]: current.filter(v => v !== value) };
-      }
-    });
-  };
-
-  const handleSelectChange = (filterKey, value) => {
-    setActiveFilters(prev => ({
-      ...prev,
-      [filterKey]: value || undefined
-    }));
-  };
+  }, [activeFilters, priceRange, sortBy, itemsPerPage, inStockOnly]);
 
   const clearFilters = () => {
     setActiveFilters({});
     setPriceRange({ min: '', max: '' });
+    setInStockOnly(false);
   };
 
   const hasActiveFilters = Object.keys(activeFilters).some(k => {
     const v = activeFilters[k];
     return v && (Array.isArray(v) ? v.length > 0 : true);
-  }) || priceRange.min || priceRange.max;
+  }) || priceRange.min || priceRange.max || inStockOnly;
 
   if (categoriesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-[#074089] mx-auto" size={48} />
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -187,25 +126,25 @@ const SubcategoryView = () => {
 
   if (!category || !subcategory) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('categoryNotFound')}</h1>
           <Link to="/catalog" className="text-[#074089] hover:text-[#2C5BB4]">
             {t('backToCatalog')}
           </Link>
-        </div>
+        </main>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart cartCount={cart.length} />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">{t('home')}</Link>
@@ -222,7 +161,7 @@ const SubcategoryView = () => {
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{getLocalizedName(subcategory)}</h1>
             <p className="text-gray-600 mt-1">
-              {filteredProducts.length} {t('productsWord')}
+              {total} {t('productsWord')}
             </p>
           </div>
 
@@ -230,23 +169,25 @@ const SubcategoryView = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setInStockOnly(!inStockOnly)}
+              aria-label={language === 'ru' ? 'В наличии' : 'In Stock'}
+              aria-pressed={inStockOnly}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${inStockOnly
                 ? 'bg-[#074089] text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-[#074089]'
                 }`}
             >
-              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] animate-pulse'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] '}`}></span>
               <PackageCheck size={16} />
               <span className="hidden sm:inline">{language === 'ru' ? 'В наличии' : 'In Stock'}</span>
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
+              aria-expanded={showFilters} className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
             >
               <SlidersHorizontal size={18} />
               {t('filters')}
               {hasActiveFilters && (
-                <span className="bg-[#074089] text-white text-xs px-2 py-0.5 rounded-full">!</span>
+                <span className="bg-[#074089] text-white text-xs px-2 py-0.5 rounded-full">{Object.values(activeFilters).reduce((count,value)=>count+(Array.isArray(value)?value.length:value?1:0),0)+(priceRange.min || priceRange.max ? 1 : 0)+(inStockOnly?1:0)}</span>
               )}
             </button>
           </div>
@@ -261,8 +202,8 @@ const SubcategoryView = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
-          <aside className={`lg:w-72 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+          <aside className={`filter-sidebar w-full lg:w-72 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                   <Filter size={18} />
@@ -279,95 +220,16 @@ const SubcategoryView = () => {
                 )}
               </div>
 
-              {/* Close button for mobile */}
-              <button
-                onClick={() => setShowFilters(false)}
-                className="lg:hidden absolute top-4 right-4 text-gray-500"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Dynamic Filters */}
-              {filters.map((filter) => {
-                // Преобразуем формат API к формату компонента
-                const filterKey = filter.key;
-                const filterLabel = filter.key;
-                const filterOptions = filter.options || [];
-                const isInput = filter.type === 'input';
-
-                return (
-                  <div key={filterKey} className="mb-6 border-b border-gray-100 pb-4 last:border-0">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {filterLabel}
-                    </label>
-
-                    {/* Select (для Бренд с type: input или с большим количеством опций) */}
-                    {(isInput || filterOptions.length > 8) && (
-                      <select
-                        value={activeFilters[filterKey] || ''}
-                        onChange={(e) => handleSelectChange(filterKey, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#074089] focus:border-transparent text-sm"
-                      >
-                        <option value="">{t('all')}</option>
-                        {filterKey === 'Бренд' ? (
-                          // Для брендов показываем бренды из товаров + опции из фильтров
-                          (() => {
-                            const combined = [...brands, ...filterOptions];
-                            const unique = new Map();
-                            combined.forEach(opt => {
-                              if (typeof opt !== 'string') return;
-                              const trimmed = opt.trim();
-                              const lower = trimmed.toLowerCase();
-                              if (lower === 'все бренды' || lower === 'all brands' || lower === 'all') return;
-                              if (!unique.has(lower)) {
-                                unique.set(lower, trimmed);
-                              } else {
-                                const current = unique.get(lower);
-                                const currentUppers = (current.match(/[A-ZА-Я]/g) || []).length;
-                                const newUppers = (trimmed.match(/[A-ZА-Я]/g) || []).length;
-                                if (newUppers > currentUppers) {
-                                  unique.set(lower, trimmed);
-                                }
-                              }
-                            });
-                            return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
-                          })().map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))
-                        ) : (
-                          filterOptions.filter(opt => {
-                            if (typeof opt !== 'string') return true;
-                            const lower = opt.trim().toLowerCase();
-                            return lower !== 'все бренды' && lower !== 'all brands' && lower !== 'all';
-                          }).map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))
-                        )}
-                      </select>
-                    )}
-
-                    {/* Checkbox group (для типов, классов и т.д.) */}
-                    {!isInput && filterOptions.length <= 8 && filterOptions.length > 0 && (
-                      <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {filterOptions.filter(opt => {
-                            if (typeof opt !== 'string') return true;
-                            const lower = opt.trim().toLowerCase();
-                            return lower !== 'все бренды' && lower !== 'all brands' && lower !== 'all';
-                          }).map(option => (
-                          <label key={option} className="flex items-center gap-2 cursor-pointer text-sm">
-                            <input
-                              type="checkbox"
-                              checked={activeFilters[filterKey]?.includes(option) || false}
-                              onChange={(e) => handleFilterChange(filterKey, option, e.target.checked)}
-                              className="w-4 h-4 text-[#074089] rounded focus:ring-[#074089]"
-                            />
-                            <span className="text-gray-700">{option}</span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
+              {filters.map(filter => {
+                const isBrand = /^(бренд|brand)$/i.test(filter.key);
+                const catalogValues = products.flatMap(product => {
+                  const specs = language === 'en' ? product.specs_en : product.specs;
+                  const value = specs?.[filter.key] ?? product.specs?.[filter.key];
+                  return value === undefined || value === null ? [] : Array.isArray(value) ? value : [value];
+                });
+                const options = [...(isBrand ? brands : catalogValues),...(filter.options || [])];
+                if (!options.length) return null;
+                return <FilterOptions key={filter.key} label={filter.label || filter.key} options={options} value={activeFilters[filter.key]} onChange={value=>setActiveFilters(current=>({...current,[filter.key]:value}))} />;
               })}
 
               {/* Price filter */}
@@ -399,7 +261,7 @@ const SubcategoryView = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t('types')}
                   </label>
-                  <div className="space-y-1 max-h-64 overflow-y-auto">
+                  <div className="space-y-1 ">
                     {subcategory.children.map((child) => (
                       <Link
                         key={child.id}
@@ -416,7 +278,7 @@ const SubcategoryView = () => {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="catalog-results flex-1">
             {/* Third level categories grid */}
             {subcategory.children && subcategory.children.length > 0 && (
               <section className="mb-12">
@@ -460,7 +322,7 @@ const SubcategoryView = () => {
             <section>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
-                  {t('products')} ({sortedProducts.length})
+                  {t('products')} ({total})
                 </h2>
 
                 {/* Sorting and Items per page */}
@@ -469,6 +331,7 @@ const SubcategoryView = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600 hidden sm:inline">{language === 'ru' ? 'Показать:' : 'Show:'}</span>
                     <select
+                      aria-label={language === 'ru' ? 'Количество товаров на странице' : 'Products per page'}
                       value={itemsPerPage}
                       onChange={(e) => setItemsPerPage(Number(e.target.value))}
                       className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent bg-white"
@@ -481,6 +344,7 @@ const SubcategoryView = () => {
 
                   {/* Sort */}
                   <select
+                    aria-label={language === 'ru' ? 'Сортировка товаров' : 'Sort products'}
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent bg-white"
@@ -500,7 +364,7 @@ const SubcategoryView = () => {
                 </div>
               ) : paginatedProducts.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                     {paginatedProducts.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
@@ -551,7 +415,7 @@ const SubcategoryView = () => {
             </section>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

@@ -1,0 +1,224 @@
+[
+  {
+    "path": "/api/categories/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/{category_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/categories/{category_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/categories/{category_id}/reorder",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/categories/reorder-all",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/{category_id}/subcategories",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/subcategories/{subcategory_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/categories/subcategories/{subcategory_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/categories/subcategories/reorder-all",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/third-level/reorder-all",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/subcategories/{subcategory_id}/children",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/categories/third-level/{category_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/categories/third-level/{category_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/products/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/products/{product_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/products/{product_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/orders/",
+    "methods": [
+      "GET"
+    ]
+  },
+  {
+    "path": "/api/orders/{order_id}",
+    "methods": [
+      "GET"
+    ]
+  },
+  {
+    "path": "/api/orders/{order_id}/status",
+    "methods": [
+      "PATCH"
+    ]
+  },
+  {
+    "path": "/api/featured/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/featured/{product_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/featured/{featured_id}/order",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/upload/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/upload/image",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/upload/image/{filename}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/upload/document",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/upload/document/{filename}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/news/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/news/{slide_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/news/{slide_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/news/{slide_id}/order",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/slides/all",
+    "methods": [
+      "GET"
+    ]
+  },
+  {
+    "path": "/api/slides/",
+    "methods": [
+      "POST"
+    ]
+  },
+  {
+    "path": "/api/slides/{slide_id}",
+    "methods": [
+      "PUT"
+    ]
+  },
+  {
+    "path": "/api/slides/{slide_id}",
+    "methods": [
+      "DELETE"
+    ]
+  },
+  {
+    "path": "/api/admin/stats",
+    "methods": [
+      "GET"
+    ]
+  },
+  {
+    "path": "/api/settings",
+    "methods": [
+      "PUT"
+    ]
+  }
+]

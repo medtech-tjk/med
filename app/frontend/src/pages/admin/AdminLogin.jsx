@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, AlertCircle } from 'lucide-react';
+import { loginAdmin } from '../../lib/adminApi';
 
 const AdminLogin = () => {
   const [token, setToken] = useState('');
@@ -14,22 +15,11 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}/api/admin/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Token': token
-        }
-      });
-
-      if (response.ok) {
-        localStorage.setItem('adminToken', token);
-        navigate('/admin/dashboard');
-      } else {
-        setError('Неверный токен доступа');
-      }
+      await loginAdmin(token);
+      setToken('');
+      navigate('/admin/dashboard');
     } catch (err) {
-      setError('Ошибка подключения к серверу');
+      setError(err.message || 'Ошибка подключения к серверу');
     } finally {
       setLoading(false);
     }

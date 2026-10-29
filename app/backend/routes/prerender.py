@@ -7,7 +7,7 @@ Regular users get the normal React SPA.
 """
 
 from fastapi import APIRouter, Request, Response
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -20,9 +20,6 @@ load_dotenv(ROOT_DIR / '.env')
 router = APIRouter(prefix="/prerender", tags=["Prerender"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 SITE_URL = os.environ.get('SITE_URL', 'https://medtech.tj').rstrip('/')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', SITE_URL).rstrip('/')
@@ -65,6 +62,10 @@ def build_base_html(title: str, description: str, canonical: str,
                      og_image: str = '', body_content: str = '',
                      json_ld: str = '', breadcrumb_ld: str = '') -> str:
     """Build a complete HTML page for bots with SEO content."""
+    # JSON strings can contain a literal closing script tag from product content.
+    json_ld = json_ld.replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    breadcrumb_ld = breadcrumb_ld.replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
+    og_image = og_image or f'{SITE_URL}/og-image.png'
     return f"""<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -74,6 +75,9 @@ def build_base_html(title: str, description: str, canonical: str,
     <meta name="description" content="{escape(description)}">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{escape(canonical)}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{SITE_URL}/favicon-96x96.png">
+    <link rel="shortcut icon" href="{SITE_URL}/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="{SITE_URL}/apple-touch-icon.png">
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -108,6 +112,7 @@ def build_base_html(title: str, description: str, canonical: str,
     <footer>
         <p>© Tib Technology — Магазин медицинского оборудования в Душанбе, Таджикистан</p>
         <p>Телефон: +992 93 333 96 39 | Email: tjkmedtech@gmail.com</p>
+        <p>Душанбе, улица Академика Акобира Адхамова, 11/5</p>
         <p>Пн-Пт: 9:00-18:00</p>
     </footer>
 </body>
@@ -152,73 +157,13 @@ async def prerender_product(slug: str, request: Request):
         "description": desc_clean,
         "image": main_image,
         "sku": sku,
-        "offers": {
-            "@type": "Offer",
-            "url": canonical,
-            "priceCurrency": "TJS",
-            "price": price,
-            "availability": "https://schema.org/InStock" if in_stock else "https://schema.org/OutOfStock",
-            "seller": {
-                "@type": "Organization",
-                "name": "Tib Technology"
-            },
-            "hasMerchantReturnPolicy": {
-                "@type": "MerchantReturnPolicy",
-                "applicableCountry": "TJ",
-                "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-                "merchantReturnDays": 14,
-                "returnMethod": "https://schema.org/ReturnByMail",
-                "returnFees": "https://schema.org/FreeReturn"
-            },
-            "shippingDetails": {
-                "@type": "OfferShippingDetails",
-                "shippingDestination": {
-                    "@type": "DefinedRegion",
-                    "addressCountry": "TJ"
-                },
-                "shippingRate": {
-                    "@type": "MonetaryAmount",
-                    "value": "0",
-                    "currency": "TJS"
-                },
-                "deliveryTime": {
-                    "@type": "ShippingDeliveryTime",
-                    "handlingTime": {
-                        "@type": "QuantitativeValue",
-                        "minValue": 1,
-                        "maxValue": 3,
-                        "unitCode": "DAY"
-                    },
-                    "transitTime": {
-                        "@type": "QuantitativeValue",
-                        "minValue": 1,
-                        "maxValue": 7,
-                        "unitCode": "DAY"
-                    }
-                }
-            }
-        },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "1",
-            "bestRating": "5",
-            "worstRating": "1"
-        },
-        "review": {
-            "@type": "Review",
-            "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": "5",
-                "bestRating": "5"
-            },
-            "author": {
-                "@type": "Organization",
-                "name": "Tib Technology"
-            },
-            "reviewBody": f"Профессиональное медицинское оборудование {name} от Tib Technology."
-        }
     }
+    if not product.get('price_on_request') and isinstance(price, (int, float)) and price > 0:
+        structured_data['offers'] = {
+            "@type": "Offer", "url": canonical, "priceCurrency": "TJS", "price": price,
+            "availability": "https://schema.org/InStock" if in_stock else "https://schema.org/OutOfStock",
+            "seller": {"@type": "Organization", "name": "Tib Technology"}
+        }
     if brand:
         structured_data["brand"] = {"@type": "Brand", "name": brand}
 
@@ -331,10 +276,12 @@ async def prerender_catalog(request: Request):
         "@type": "MedicalBusiness",
         "name": "Tib Technology",
         "url": SITE_URL,
+        "logo": f"{SITE_URL}/logo512.png",
         "telephone": "+992933339639",
         "email": "tjkmedtech@gmail.com",
         "address": {
             "@type": "PostalAddress",
+            "streetAddress": "улица Академика Акобира Адхамова, 11/5",
             "addressLocality": "Душанбе",
             "addressCountry": "TJ"
         },
@@ -556,11 +503,13 @@ async def prerender_home(request: Request):
                 "name": "Tib Technology",
                 "alternateName": "ООО «Тиб Технология»",
                 "url": SITE_URL,
+                "logo": f"{SITE_URL}/logo512.png",
                 "telephone": "+992933339639",
                 "email": "tjkmedtech@gmail.com",
                 "address": {
                     "@type": "PostalAddress",
-                    "addressLocality": "Душанбе",
+                    "streetAddress": "улица Академика Акобира Адхамова, 11/5",
+            "addressLocality": "Душанбе",
                     "addressCountry": "TJ"
                 },
                 "description": desc

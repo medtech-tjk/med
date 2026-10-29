@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import CategoryCard from '../components/CategoryCard';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import HeroSlider from '../components/HeroSlider';
@@ -6,19 +7,16 @@ import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
 import { useCategories, useFeaturedProducts } from '../hooks/useApi';
-import { ChevronRight, ChevronLeft, Loader2, ShoppingCart } from 'lucide-react';
-import { toast } from '../hooks/use-toast';
-import { useCurrency } from '../context/CurrencyContext';
+import { ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { COMPANY } from '../lib/company';
 
 const Home = () => {
-  const [cart, setCart] = useState([]);
   const [featuredPage, setFeaturedPage] = useState(0);
-  const { formatPrice } = useCurrency();
   const { t, language, getLocalizedName } = useLanguage();
 
   // Загрузка категорий из API
-  const { categories: catalogTree, loading: categoriesLoading } = useCategories();
+  const { categories: catalogTree, loading: categoriesLoading, error: categoriesError } = useCategories();
   // Загрузка рекомендованных товаров
   const { products: featuredProducts, loading: featuredLoading } = useFeaturedProducts();
 
@@ -42,13 +40,6 @@ const Home = () => {
     }
   };
 
-  // Get full image URL
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return null;
-    if (imagePath.startsWith('http')) return imagePath;
-    return `${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}${imagePath}`;
-  };
-
   // SEO: Organization + WebSite JSON-LD for homepage
   useEffect(() => {
     // Organization schema
@@ -67,7 +58,7 @@ const Home = () => {
       "email": "tjkmedtech@gmail.com",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "улица Нисора Мухаммада, 5/5",
+        "streetAddress": COMPANY.street,
         "addressLocality": "Душанбе",
         "addressCountry": "TJ"
       },
@@ -165,9 +156,9 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <FloatingCart cartCount={cart.length} />
+      <FloatingCart />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1">
         {/* Hero Slider */}
         <HeroSlider />
 
@@ -184,6 +175,7 @@ const Home = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={prevPage}
+                      aria-label={language === 'ru' ? 'Предыдущие товары' : 'Previous products'}
                       disabled={featuredPage === 0}
                       className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -194,6 +186,7 @@ const Home = () => {
                     </span>
                     <button
                       onClick={nextPage}
+                      aria-label={language === 'ru' ? 'Следующие товары' : 'Next products'}
                       disabled={featuredPage >= totalPages - 1}
                       className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -244,49 +237,14 @@ const Home = () => {
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="animate-spin text-[#074089]" size={48} />
               </div>
+            ) : categoriesError || catalogTree.length === 0 ? (
+              <div role="status" className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center">
+                <p className="text-slate-700">{language === 'ru' ? 'Каталог сейчас недоступен. Поможем подобрать оборудование по телефону.' : 'The catalog is currently unavailable. Call us for help choosing equipment.'}</p>
+                <a href="tel:+992933339639" className="inline-block mt-4 text-[#074089] font-semibold underline underline-offset-4">+992 93 333 96 39</a>
+              </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {catalogTree.map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/catalog/${category.slug}`}
-                    className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 bg-white"
-                  >
-                    {/* Image */}
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-50 to-white">
-                      {category.image ? (
-                        <img
-                          src={category.image}
-                          alt={category.name}
-                          className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                          <span className="text-4xl text-blue-300">📁</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <h3 className="text-lg font-bold mb-2 group-hover:translate-x-2 transition-transform duration-300">
-                        {getLocalizedName(category)}
-                      </h3>
-                      <div className="flex items-center text-sm opacity-90 group-hover:opacity-100 transition-opacity">
-                        <span>{language === 'ru' ? 'Смотреть товары' : 'View products'}</span>
-                        <ChevronRight size={16} className="ml-1 transform group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-
-                    {/* Count badge - glassmorphism effect */}
-                    {category.children && category.children.length > 0 && (
-                      <div className="absolute top-3 right-3 backdrop-blur-md bg-white/30 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border border-white/20">
-                        {category.children.length}
-                      </div>
-                    )}
-                  </Link>
-                ))}
+                {catalogTree.map(category => <CategoryCard key={category.id} category={category} />)}
               </div>
             )}
           </div>

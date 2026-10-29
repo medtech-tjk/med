@@ -9,10 +9,11 @@ const About = () => {
   const { t, language } = useLanguage();
   const trans = aboutTranslations[language];
   const heroRef = useRef(null);
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   // Parallax effect
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const handleScroll = () => {
       if (heroRef.current) {
         const scrolled = window.scrollY;
@@ -27,6 +28,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <main id="main-content" tabIndex={-1}>
 
       {/* Hero Section with Parallax */}
       <div className="relative h-[70vh] overflow-hidden">
@@ -75,7 +77,7 @@ const About = () => {
             </div>
 
             {/* Timeline */}
-            <div className="mt-12 p-8 bg-gradient-to-r from-[#074089]/5 via-[#074089]/10 to-transparent rounded-2xl border border-[#074089]/20">
+            <div className="mt-12 p-5 sm:p-8 bg-gradient-to-r from-[#074089]/5 via-[#074089]/10 to-transparent rounded-2xl border border-[#074089]/20">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2 bg-white rounded-xl shadow-sm">
                   <Award className="text-[#074089]" size={32} />
@@ -83,7 +85,7 @@ const About = () => {
                 <h3 className="text-2xl font-bold text-gray-900">{trans.historyTitle}</h3>
               </div>
               <div className="space-y-8 relative before:absolute before:left-10 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-[#074089] before:to-transparent">
-                <div className="flex gap-6 items-start relative">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start relative">
                   <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#074089] to-[#2C5BB4] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg transform hover:scale-105 transition-transform">
                     2007
                   </div>
@@ -93,7 +95,7 @@ const About = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-6 items-start relative">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start relative">
                   <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#2C5BB4] to-[#052c5e] rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg transform hover:scale-105 transition-transform">
                     2018
                   </div>
@@ -295,7 +297,7 @@ const About = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href="tel:+992918611259"
+                href="tel:+992933339639"
                 className="flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-[#074089] transition-all text-sm"
               >
                 <Phone size={18} />
@@ -313,9 +315,10 @@ const About = () => {
         </section>
       </div>
 
+      </main>
       <Footer />
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeIn {
           from {
             opacity: 0;

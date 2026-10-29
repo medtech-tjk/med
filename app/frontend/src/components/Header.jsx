@@ -4,6 +4,7 @@ import { Search, LayoutGrid, Info, Wrench, Home, ShoppingCart, Globe, Phone, Mai
 import CurrencySwitcher from './CurrencySwitcher';
 import { useLanguage } from '../context/LanguageContext';
 import Logo from './Logo';
+import { readCart, cartQuantity } from '../lib/cart';
 
 const Header = ({ cartCount = 0 }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,13 +16,7 @@ const Header = ({ cartCount = 0 }) => {
   // Синхронизация корзины
   useEffect(() => {
     const updateCartCount = () => {
-      const cart = localStorage.getItem('cart');
-      if (cart) {
-        const items = JSON.parse(cart);
-        setActualCartCount(items.length);
-      } else {
-        setActualCartCount(0);
-      }
+      setActualCartCount(cartQuantity(readCart()));
     };
 
     updateCartCount();
@@ -30,23 +25,25 @@ const Header = ({ cartCount = 0 }) => {
     const handleCartUpdate = () => updateCartCount();
     window.addEventListener('cartUpdated', handleCartUpdate);
 
-    const interval = setInterval(updateCartCount, 500);
 
     return () => {
       window.removeEventListener('storage', updateCartCount);
       window.removeEventListener('cartUpdated', handleCartUpdate);
-      clearInterval(interval);
     };
   }, [cartCount]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/catalog?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
-  const displayCount = cartCount > 0 ? cartCount : actualCartCount;
+  const displayCount = actualCartCount;
+
+  useEffect(() => {
+    setSearchQuery(new URLSearchParams(location.search).get('search') || '');
+  }, [location.search]);
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
@@ -55,7 +52,8 @@ const Header = ({ cartCount = 0 }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white shadow-md">
+      <a className="skip-link" href="#main-content">{language === 'ru' ? 'Перейти к содержимому' : 'Skip to content'}</a>
+      <header className="site-header sticky top-0 z-50 bg-white border-b border-slate-200">
         {/* Top bar - Desktop only */}
         <div className="hidden md:block bg-gradient-to-r from-[#074089] to-[#2C5BB4] text-white py-2">
           <div className="container mx-auto px-4 flex justify-between items-center text-sm">
@@ -73,18 +71,20 @@ const Header = ({ cartCount = 0 }) => {
 
         {/* Main header */}
         <div className="container mx-auto px-4 py-3 md:py-4">
-          <div className="flex items-center justify-between gap-4 md:gap-8">
+          <div className="header-layout flex flex-wrap items-center justify-between gap-3 xl:gap-6">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-              <Logo className="w-9 h-9 md:w-11 md:h-11 text-[#074089]" />
-              <span className="text-lg md:text-2xl font-bold text-[#074089] hidden sm:block">Tib Technology</span>
+            <Link to="/" aria-label={language === 'ru' ? 'Tib Technology — главная' : 'Tib Technology — home'} className="flex items-center space-x-2 flex-shrink-0">
+              <Logo className="w-8 h-8 sm:w-10 sm:h-10 text-[#074089]" />
+              <span className="text-sm sm:text-xl font-bold tracking-tight text-[#074089]">Tib Technology</span>
             </Link>
 
             {/* Search - Expanded */}
-            <form onSubmit={handleSearch} className="flex-1 max-w-3xl">
+            <form onSubmit={handleSearch} role="search" className="order-3 basis-full xl:order-none xl:basis-auto xl:flex-1 min-w-0">
               <div className="relative">
                 <input
-                  type="text"
+                  type="search"
+                  maxLength={200}
+                  aria-label={t('search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('search')}
@@ -92,6 +92,7 @@ const Header = ({ cartCount = 0 }) => {
                 />
                 <button
                   type="submit"
+                  aria-label={language === 'ru' ? 'Найти оборудование' : 'Search equipment'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-[#074089] transition-colors"
                 >
                   <Search size={22} className="md:w-6 md:h-6" />
@@ -100,11 +101,11 @@ const Header = ({ cartCount = 0 }) => {
             </form>
 
             {/* Desktop right side */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden xl:flex items-center gap-3">
               {/* Catalog Button - Moved Here */}
               <Link
                 to="/catalog"
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#074089] hover:bg-[#2C5BB4] text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg whitespace-nowrap"
+                className="ui-button flex items-center gap-2 px-5 py-2.5 bg-[#074089] hover:bg-[#052c5e] text-white font-semibold whitespace-nowrap"
               >
                 <LayoutGrid size={20} />
                 <span>{t('catalog')}</span>
@@ -117,6 +118,7 @@ const Header = ({ cartCount = 0 }) => {
                   onClick={toggleLanguage}
                   className="flex items-center gap-1 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors font-medium"
                   title={language === 'ru' ? 'Switch to English' : 'Переключить на русский'}
+                  aria-label={language === 'ru' ? 'RU — Switch to English' : 'EN — Переключить на русский'}
                 >
                   <Globe size={18} className="text-[#074089]" />
                   <span className="uppercase text-sm font-bold text-gray-700">{language}</span>
@@ -125,20 +127,13 @@ const Header = ({ cartCount = 0 }) => {
                 <CurrencySwitcher />
               </div>
 
-              <div className="flex items-center gap-1 text-sm font-medium text-gray-600">
-                <Link to="/about" className="px-3 py-2 hover:bg-gray-100 rounded-lg hover:text-[#074089] transition-colors">
-                  {t('about')}
-                </Link>
-                <Link to="/services" className="px-3 py-2 hover:bg-gray-100 rounded-lg hover:text-[#074089] transition-colors">
-                  {t('services')}
-                </Link>
-              </div>
             </div>
 
             {/* Mobile: Language + Currency */}
-            <div className="md:hidden flex items-center gap-1">
+            <div className="xl:hidden flex items-center gap-1">
               <button
                 onClick={toggleLanguage}
+                aria-label={language === 'ru' ? 'RU — Switch to English' : 'EN — Переключить на русский'}
                 className="flex items-center gap-0.5 px-2 py-1 rounded-lg text-gray-700 border border-gray-200"
               >
                 <Globe size={14} className="text-[#074089]" />
@@ -148,10 +143,18 @@ const Header = ({ cartCount = 0 }) => {
             </div>
           </div>
         </div>
+        <nav aria-label={language === 'ru' ? 'Разделы сайта' : 'Site sections'} className="hidden xl:block border-t border-slate-100">
+          <div className="container header-desktop-links flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              {[['/',t('home')],['/catalog',t('catalog')],['/about',t('about')],['/services',t('services')]].map(([path,label]) => <Link key={path} to={path} aria-current={isActive(path) ? 'page' : undefined}>{label}</Link>)}
+            </div>
+            <span className="text-xs text-slate-500">{language === 'ru' ? 'Подбор · Поставка · Сервис' : 'Selection · Supply · Service'}</span>
+          </div>
+        </nav>
       </header>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-inset-bottom">
+      <nav aria-label={language === 'ru' ? 'Основная навигация' : 'Main navigation'} className="xl:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-inset-bottom">
         <div className="flex items-center justify-around py-2 px-4 relative max-w-md mx-auto">
           {/* Главная */}
           <Link
@@ -188,7 +191,7 @@ const Header = ({ cartCount = 0 }) => {
               }`}>
               <ShoppingCart size={24} className="text-white" />
               {displayCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                <span className="absolute -top-0.5 -right-0.5 bg-red-700 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
                   {displayCount > 9 ? '9+' : displayCount}
                 </span>
               )}

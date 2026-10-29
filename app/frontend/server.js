@@ -10,10 +10,68 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const crypto = require('crypto');
 
 const app = express();
+app.use(require('compression')());
+app.disable('x-powered-by');
+// Forwarded client addresses are trusted only when the deployment explicitly
+// describes its proxy topology. The default uses the direct socket peer.
+if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY);
+app.use((req, res, next) => {
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.set('X-Frame-Options', 'SAMEORIGIN');
+  if (/^\/(admin|cart)(\/|$)/.test(req.path)) res.set('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
 const PORT = process.env.PORT || 3000;
-const BACKEND_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+const BACKEND_URL = (process.env.BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+const HOP_HEADERS = new Set(['connection','keep-alive','proxy-authenticate','proxy-authorization','te','trailer','transfer-encoding','upgrade']);
+function stripHopHeaders(headers) {
+  const blocked = new Set(HOP_HEADERS);
+  for (const token of String(headers.connection || '').split(',')) if (token.trim()) blocked.add(token.trim().toLowerCase());
+  for (const name of Object.keys(headers)) if (blocked.has(name.toLowerCase())) delete headers[name];
+}
+
+// Same-origin API gateway keeps HttpOnly admin cookies first-party and strips
+// client-supplied identity headers before forwarding to FastAPI.
+app.use(['/api', '/uploads'], (req, res) => {
+  if (!BACKEND_URL) return res.status(503).json({detail:'API is temporarily unavailable'});
+  let target;
+  try { target = new URL(BACKEND_URL); } catch { return res.status(503).json({detail:'API is temporarily unavailable'}); }
+  const headers = {...req.headers, host: target.host};
+  stripHopHeaders(headers);
+  for (const name of Object.keys(headers)) {
+    if (/^(x-admin-token|x-client-ip|x-client-ip-time|x-client-ip-signature|x-forwarded-|forwarded$|connection$|proxy-)/i.test(name)) delete headers[name];
+  }
+  headers['x-forwarded-for'] = req.ip;
+  headers['x-forwarded-proto'] = req.protocol;
+  const sharedSecret = process.env.PROXY_SHARED_SECRET || '';
+  if (sharedSecret.length >= 32) {
+    const stamp = String(Math.floor(Date.now()/1000));
+    const ip = req.ip;
+    headers['x-client-ip'] = ip;
+    headers['x-client-ip-time'] = stamp;
+    headers['x-client-ip-signature'] = crypto.createHmac('sha256', sharedSecret).update(`${ip}|${stamp}`).digest('hex');
+  }
+  const transport = target.protocol === 'https:' ? https : http;
+  const upstream = transport.request({protocol:target.protocol, hostname:target.hostname, port:target.port || undefined,
+    method:req.method, path:`${req.originalUrl}`, headers, timeout:30000}, response => {
+    res.status(response.statusCode || 502);
+    const responseHeaders = {...response.headers};
+    stripHopHeaders(responseHeaders);
+    for (const [key,value] of Object.entries(responseHeaders)) {
+      if (value !== undefined) res.setHeader(key,value);
+    }
+    response.pipe(res);
+  });
+  upstream.on('timeout',()=>upstream.destroy(new Error('upstream timeout')));
+  upstream.on('error',()=>{if(!res.headersSent)res.status(503).json({detail:'API is temporarily unavailable'});else res.destroy();});
+  req.pipe(upstream);
+});
 
 // Bot user agents to detect
 const BOT_USER_AGENTS = [
@@ -104,12 +162,17 @@ app.get('/robots.txt', (req, res) => {
 // Serve static files from build directory
 app.use(express.static(buildPath, {
   // Don't serve index.html for missing files - we'll handle that
-  index: false
+  index: false,
+  setHeaders(res, filePath) {
+    if (filePath.includes(path.sep + 'assets' + path.sep)) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    else res.setHeader('Cache-Control', 'no-cache');
+  }
 }));
 
 // Bot detection middleware for SEO-critical pages
 app.use(async (req, res, next) => {
   const userAgent = req.headers['user-agent'] || '';
+  if (shouldPrerender(req.path)) res.vary('User-Agent');
   
   // Only intercept for bots on prerender-able routes
   if (!isBot(userAgent) || !shouldPrerender(req.path) || !BACKEND_URL) {

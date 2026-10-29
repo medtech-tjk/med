@@ -6,15 +6,9 @@ Now with bilingual support (Russian + English)
 """
 import asyncio
 import os
-from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
 from uuid import uuid4
-from dotenv import load_dotenv
-
-load_dotenv()
-
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-db_name = os.environ.get('DB_NAME', 'test_database')
+from database import client, db
 
 # Full catalog structure with Russian and English names
 FULL_CATALOG = [
@@ -550,8 +544,11 @@ def translate_specs(specs_ru: dict) -> dict:
 
 
 async def run_migration():
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[db_name]
+    configured_name=os.environ.get('DB_NAME','').strip()
+    if not configured_name or os.environ.get('MIGRATION_CONFIRM_DB_NAME') != configured_name:
+        raise RuntimeError('Set DB_NAME and MIGRATION_CONFIRM_DB_NAME to the exact intended database before migration')
+    if os.environ.get('APP_ENV','').lower() in {'production','prod'}:
+        raise RuntimeError('This sample data migration cannot run in production')
     
     print("🗑️ Clearing old data...")
     await db.categories.delete_many({})
@@ -709,7 +706,10 @@ async def run_migration():
         await db.settings.insert_one(default_settings)
         print(f"   ✅ Created settings with USD to TJS rate: {default_settings['usd_to_tjs_rate']}")
     
-    client.close()
-
 if __name__ == "__main__":
-    asyncio.run(run_migration())
+    async def main():
+        try:
+            await run_migration()
+        finally:
+            await client.close()
+    asyncio.run(main())

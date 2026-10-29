@@ -1,0 +1,414 @@
+[
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\App.css",
+    "sha256": "ab6aa69d4f3182c3a5392503af7a1d672ec6b28ea2f157531edf79b233868f16"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\App.js",
+    "sha256": "4a35bc60ef068c8b7ebe3efaddab7fe91c2025cbdbad544ae36544e93674cab5"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\categoriesData.js",
+    "sha256": "a8d3bf4ba1b767a33dee80c9ef9f714e1cf0cbac2ece6db0db56afe0d56a9f63"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\categoryFilters.js",
+    "sha256": "af4862281c3c1e5e6ba2fea12ad83a66236e460ed9a84eb2b98776eb519f535e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\CategoryCard.jsx",
+    "sha256": "9178c7d53c00fe2752651c970a4b0f7ef8001d4fd15c6c75b0fe99775f9319a3"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\CurrencySwitcher.jsx",
+    "sha256": "70a007d7cf72dbde7f4fe4d6b1ef8914a00515cafdb708dce3a80b91d7d360bb"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\FilterOptions.jsx",
+    "sha256": "d26b1963ba32b03b575e7981227d675b62069622fd3c834e697f840ed552dc74"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\FilterOptions.test.jsx",
+    "sha256": "46a170b7b148cb222281e8fd155effa306af6e6d27f17a56869836a871b8dce8"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\FloatingCart.jsx",
+    "sha256": "e5783262d240a902a810905e9e7b4471ccb9bf6f3d793115df56d10d16dd3ae0"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\Footer.jsx",
+    "sha256": "f299f05a853b760cc94a1d93c673b907742cafd90107a1a49c4f1ee217674384"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\Header.jsx",
+    "sha256": "c9c4acd8a05aa203f3ead6396ad0bedb7fbd1491b97547be37f7af1d636c587c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\HeroSlider.jsx",
+    "sha256": "4c8be48e433c0e23d6e0bef8ff24679435bfd03e3e5c63383ea1d52ce9b88046"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\Logo.jsx",
+    "sha256": "dc4623ea5783d45239b8d2ee50fedcaf178779155dba4612c8c71656cff8a22e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ProductCard.jsx",
+    "sha256": "763bd07e1c82b3f77cd524ac28d0d5e1bc35e1d230c8b47e0b09d4446ea7e2ed"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\RouteMetadata.jsx",
+    "sha256": "b38bc9f3a3e2e90cc23e8ac2af5a9a2bc6bc177909eb871bc3c982666bce4165"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\accordion.jsx",
+    "sha256": "478490060e2a3d511e1b5d1a7d65439bbb992e4e1e99d5f0709f325173453156"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\alert-dialog.jsx",
+    "sha256": "fe21928546b77773543f93d7c4382094fd771403cf9b3d3928c572e72d9ece97"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\alert.jsx",
+    "sha256": "809a0b3300cf85221cd2e667e2cd1970a138bdaa57ef512c81a39a2188dfc13d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\aspect-ratio.jsx",
+    "sha256": "62f29cd87c19f52d403dc2d17823849db2c8cbd541c9f96de20ef13e58d379db"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\avatar.jsx",
+    "sha256": "48963e22726413987e817f5c6f0b0f64438f87667de6a2154841aa8a4ce2b395"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\badge.jsx",
+    "sha256": "fc8b4e031c04004ec0b19cdb90efcadfb26f2287c8d6798523c271bf96e090cf"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\breadcrumb.jsx",
+    "sha256": "f7aa1d9b30ba04d766f3f510b58eb3d129258970c234e58eba325487b2908da9"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\button.jsx",
+    "sha256": "9a5e2baa508c14319ece6be710b57554f9990a10682724b2cc15bb75b951fa3c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\calendar.jsx",
+    "sha256": "6e2ba6f3863bbab51e7d03b642f99545bd811185cb77541f9e00972e5afd1b3f"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\card.jsx",
+    "sha256": "93f9674c69410d360fbba260dce1f63f987624b08a8dd39c999e4ca81740a548"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\carousel.jsx",
+    "sha256": "b5239eb5e9ac5d362c0ed75e3fbd553d0857427e63e930721380614890678eef"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\checkbox.jsx",
+    "sha256": "b2b6819b326af045bedca84f081de6e49c7bf086110835b5b893d903ef0ec44b"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\collapsible.jsx",
+    "sha256": "a204a41111b93ca714e5e0a84e7ea09520f7783f2706bf00ecb2bcad5a0659fd"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\command.jsx",
+    "sha256": "2dfcd2b74e94a85fdbb55e1850550ae5004ef610445cd16d99b373c466771724"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\context-menu.jsx",
+    "sha256": "587e0f7d27e102b3f0282ec7baec9a0344d514c67528b64f1044deb9e32b4a7b"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\dialog.jsx",
+    "sha256": "c008f15b01a6c8b427fa8bef9846767fc98e748032ab990da8d35ec5b74d8d69"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\drawer.jsx",
+    "sha256": "5ae93a913a1ee49637ce59dee3999ffb373fd6a24771683a3f920248ee21da66"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\dropdown-menu.jsx",
+    "sha256": "4067cf704349c1febfa035aaeddad386b534425199d67b643507147a0d1e5a49"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\form.jsx",
+    "sha256": "781561c6eb18bd70c6e895f859c3c9d53836d418c36a793d5d13f89bc9a177f1"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\hover-card.jsx",
+    "sha256": "bd8408b2be5056a240820a7c9a53a8e43e85a74a3ffe2b98e8e97556cc724926"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\input-otp.jsx",
+    "sha256": "510554e342e49fc2bf6390562d9d40bc72edad4713bd5d1fc005f5aab1c43d9c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\input.jsx",
+    "sha256": "afd413939ddd20870e82644da3dd108411cff0ae34b627a2882270429ce78004"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\label.jsx",
+    "sha256": "6a429ead60a45fa3705de0bd705d4ca08c77009ab4fbfefbb321b40b4b7ce86d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\menubar.jsx",
+    "sha256": "29d774c1e564b3519d40e992f723ce4d2d48b1d0bef829c6a38f6165e79eade6"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\navigation-menu.jsx",
+    "sha256": "81483c2593765f074cbc31f8983b88fc7dd1cbb3ce54241411922e21e4166309"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\pagination.jsx",
+    "sha256": "30c62c8579e0661792bdfec1967bd815be4a70af3d45ec5e507275f9dbe34a4e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\popover.jsx",
+    "sha256": "572cf3701443191f705a2fac98f221f2138776f93d190baa1e2ce37faa9c1688"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\progress.jsx",
+    "sha256": "7da5154a7206c7763053dd4482a08ae483797b2ccb51250df3f70505d6c0907c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\radio-group.jsx",
+    "sha256": "b1ea1a9edd7e8f6247beac7e569c1b75cf1dd604d47e1a0ef3d646cdd9f61a38"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\resizable.jsx",
+    "sha256": "64761fc12edebe9f485d9e930e4110e71f684b372ab5b9b6c995a5f51a036ba7"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\scroll-area.jsx",
+    "sha256": "deac8e89bafcdedeb795ed43a524e70cef654978102b0c854b75f9826f524520"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\select.jsx",
+    "sha256": "34d264cca61ed75de8ebc76c856438167f4f12dd727bf100abe7409bc2cc86dd"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\separator.jsx",
+    "sha256": "0e01021eb735c6f4f8c0c6b3a9f99dd8428fe837c1a12b7d8be441e5a7d53030"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\sheet.jsx",
+    "sha256": "1725e0d455087c10ad67ddece7bd525f740cadf8f701a6ea4aa342c566434ebd"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\skeleton.jsx",
+    "sha256": "fb061446b99d1f3a987eaf3920df0dabeed019dad4207dc7bb2159a6244a697c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\slider.jsx",
+    "sha256": "13a9ab62370c58be57848de7100de3e5bbfcdf4a669bbfb635b7ccb11c6b1de1"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\sonner.jsx",
+    "sha256": "22ab21fc297bdedbaf1e13fb53df055187b8586c4570155212c6c0d35582a719"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\switch.jsx",
+    "sha256": "d3692433ca2fcb3bd74b587cd096942c5582452a6a95ddaf1806dceda899d592"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\table.jsx",
+    "sha256": "5a64292b865d5fc40675f65c5a84122f17e0719602f5737fbda01a4d529a9a2d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\tabs.jsx",
+    "sha256": "efefae7020ecab8eac458a60b684569f0b1c7adac0e8622fbe9b9cec9ef588cf"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\textarea.jsx",
+    "sha256": "3fa248f1e4af834a9d217efbc2be23a7f195b6411b70188e0c92954834323a30"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\toast.jsx",
+    "sha256": "77290f60c82034ae63f2edef1c8c2c467cf7bf3c44181e9e85c378278fb1ed3d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\toaster.jsx",
+    "sha256": "a32aa37772c4cedc304e436c215b746492e80fe9098b5a808f427d7dcf203130"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\toggle-group.jsx",
+    "sha256": "ff3e08fcf41370780949dc71e40e535775f198a8c711330da391cd038be419fb"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\toggle.jsx",
+    "sha256": "9ce1d15274ca504b0e93869893327fe6d86b8d2938f53367e6ceabd5bd9adb49"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\components\\ui\\tooltip.jsx",
+    "sha256": "208e3ae984234a9ce5086689b3862b1741c3c7044e64b55d4d6a84c960d5015e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\context\\CurrencyContext.jsx",
+    "sha256": "c21e222778736f88a66bc867ed6c8272c2d6917ab105fd4c468e428eed9a7a2c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\context\\LanguageContext.js",
+    "sha256": "1760b597699ee7acc04228749a65f066f78c7bf3bafcdb0a88447b0cc12333b7"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\design-system.css",
+    "sha256": "d63d7c9e1410e0828e4cc3e7ad8ff795940b0680928f779ec6450ef029774c6d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\fullCatalogTree.js",
+    "sha256": "26da67f425e90b97104d4ac4503ebd1b07d991fdc190077d2c92f8b3aacb9020"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\hooks\\use-toast.js",
+    "sha256": "73d6d7346b63128ac214692ba99cf67ec11a2bce9c0aa8d479f958de8402dae2"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\hooks\\useApi.js",
+    "sha256": "3b8efa3899db5ba71dc2992714631e22038a5abdd34dd5d04d9fc5494e32c2ad"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\hooks\\useApi.test.js",
+    "sha256": "05e0044399494230ee87a587fbda29993aef9564a270fefa31011e34d6bfc603"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\index.css",
+    "sha256": "4328cbc98fe658fae484850450365836f5883eacadd7648bec4d1bd89ccc3c50"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\index.js",
+    "sha256": "5593e440396e1b9c9fc1a581bfb4b4269973a49f36520d5554a5f14077cc8ba8"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\adminApi.js",
+    "sha256": "60c5be990040c86940378ec14543a82dc72a460fbebc33336423bbe25a1482df"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\adminApi.test.js",
+    "sha256": "5210a5e0f00a32f8388a8cf04152d072e8f6e55d297bf9421110efd136b84793"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\cart.js",
+    "sha256": "e2347c9a196133eae24d8dedfd573e3354a3760882904e5e69a0e43df4d3be59"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\cart.test.js",
+    "sha256": "4b2807366f4824460ae08ef88e3f114da3158b20b156f22b1567ee832286adba"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\company.js",
+    "sha256": "cad8644b978445a3bc9cdefd606a228cde82090305a1f25a04fcb14b42f436b4"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\filterProducts.js",
+    "sha256": "44f364703cf25aaa789b57935c297484224fc7c2c6ecf04a73214dd40e1d7aa0"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\filterProducts.test.js",
+    "sha256": "2742128b40dd79421a8b120d0eed0ed46043cdc9040836c6448ea35815d496f7"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\sanitize.js",
+    "sha256": "06e2215be7b6a40848af6fb1db508c940fef7d5c909ad0919c4af486bb4b763e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\sanitize.test.js",
+    "sha256": "b1ded5e02eca5e3927b4f2f6855adf99e6e1753e447392e0bab132ab00c62854"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\lib\\utils.js",
+    "sha256": "3bcac7a07bceaa00186a5ae6a950ea0fda278ad068cf71b7d1061ea58cd8de78"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\mockData.js",
+    "sha256": "7cfc07c62c2beeb63bb02b2bf3ec98ae6bf8ad2b819a07ebf87c2f0a9fabe534"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\About.jsx",
+    "sha256": "e1b8add1adb3614e7bb5a4403cb6a53cc27a2966aa562021a830f91f1f697424"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminCategories.jsx",
+    "sha256": "6890803882ae0903facbe59ea2eb3bab24aba69d381d33470caed5dda2947569"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminDashboard.jsx",
+    "sha256": "e5472b7ad4d4c3c8251fae0d2ca53c5c01f891a7563289d9ecd7a989bace4bf1"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminFeatured.jsx",
+    "sha256": "3de0ef4e1bc38a9debcae0c596efcac2d8dc98a6d33b3d0bbbbde24a437e25a3"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminLayout.jsx",
+    "sha256": "e2256b58502060c2a9ba4922c709b36f7370c4437389beef85c00e84640cf274"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminLogin.jsx",
+    "sha256": "a6a5926762a51382e4dcbf3e40e6b04b6d595965af3ff678c831f3cb9998d303"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminOrders.jsx",
+    "sha256": "1328093022731016101600e5078496b92c49430abb39b2354555d33de22fada4"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminProductForm.jsx",
+    "sha256": "9a347798f53597204e7aceff0972c5964ab4a0590a75ab73bd2938a8d35433b9"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminProducts.jsx",
+    "sha256": "d52abb24f1c28dfa148bc6681e3dbf51d4967b0159a13c20ef61445f02501dd6"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminSettings.jsx",
+    "sha256": "257821986f7bc816ccb9edd2c64962ae4575cb7cf5e2b3ea4f26cb2bbf8dbb6f"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\admin\\AdminSlides.jsx",
+    "sha256": "4fc0169b7bedee5844bdf19b0e0d21dbdb37f1fce8310e3da0abd2d86fbec68c"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\BrandPage.jsx",
+    "sha256": "7bb15578744b60419f756c9e06ec2757229752d9a6d6ae29e5ff9d4827f7b1c6"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\Cart.jsx",
+    "sha256": "afbcefceb80f651265080426fbb452fa66df552fa326694764a10d66218b10a8"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\Catalog.jsx",
+    "sha256": "124430f970329bcc74052586c6f2574e0e23ef41e5be4d8cc83fa540540e830b"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\CategoryView.jsx",
+    "sha256": "3b85ee4dff8b9fe8dce060a445134f0eea9697fc73aeb360f4683e9557e69eae"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\Home.jsx",
+    "sha256": "33ed419e8aaa55b4585803f573ea64298a21b261fbf4294eb75c454afc3444c0"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\NotFound.jsx",
+    "sha256": "aad7972b8494c23db46b9b86ba372ade9ac4fff961564599371e28fee1f17d9d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\ProductDetail.jsx",
+    "sha256": "0efd50520a418d81314d6926e572b711b947e281b86a3f3250c6a23b71ddc136"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\Services.jsx",
+    "sha256": "841d2fa02d230e36be0b9036c02d49d8964773683109de0b6461fb5dd634765d"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\SubcategoryView.jsx",
+    "sha256": "d41c54778c80f0985e2506339ce01f1f9837aeb57b3d8961097e8dc5e4ae2d5e"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\pages\\ThirdLevelView.jsx",
+    "sha256": "69d077606b18b18dbfef2a59d116b016004cfd5e548d1fa9518040fb600149e7"
+  },
+  {
+    "path": "C:\\Users\\alijo\\Documents\\medteck2026\\app\\frontend\\src\\translations\\pagesTranslations.js",
+    "sha256": "0c846c3047c25d5ec5ff95b003f60f61de36c6080fe50601d2e458567cc79849"
+  }
+]

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from models import Category, Subcategory, ThirdLevelCategory
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 import os
 from typing import List, Optional
@@ -16,9 +16,6 @@ load_dotenv(ROOT_DIR / '.env')
 router = APIRouter(prefix="/api/categories", tags=["Categories"], redirect_slashes=False)
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 # Update models - only fields that can be updated
 class CategoryUpdate(BaseModel):

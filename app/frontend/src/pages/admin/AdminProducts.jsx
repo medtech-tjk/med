@@ -1,3 +1,4 @@
+import { adminFetch as fetch, fetchAllProducts } from '../../lib/adminApi';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Search, Package, AlertCircle, X, Eye } from 'lucide-react';
@@ -9,9 +10,7 @@ const AdminProducts = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   useEffect(() => {
     fetchProducts();
@@ -21,11 +20,8 @@ const AdminProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/products/`);
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
-      }
+      const data = await fetchAllProducts();
+      setProducts(data);
     } catch (err) {
       setError('Ошибка загрузки товаров');
     } finally {
@@ -51,7 +47,7 @@ const AdminProducts = () => {
     try {
       const response = await fetch(`${API_URL}/api/products/${productId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -87,7 +83,7 @@ const AdminProducts = () => {
         <h1 className="text-2xl font-bold text-gray-900">Товары</h1>
         <Link
           to="/admin/products/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Plus size={18} />
           Добавить товар
@@ -111,14 +107,14 @@ const AdminProducts = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
               placeholder="Поиск по названию или бренду..."
             />
           </div>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
           >
             <option value="">Все категории</option>
             {categories.map(cat => (

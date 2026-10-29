@@ -1,0 +1,14 @@
+
+> frontend@0.1.0 test
+> craco test --watch=false --runInBand
+
+PASS src/hooks/useApi.test.js
+PASS src/lib/sanitize.test.js
+PASS src/lib/adminApi.test.js
+PASS src/lib/cart.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        1.307 s, estimated 2 s
+Ran all test suites.

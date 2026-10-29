@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["nodejs_20", "yarn"]
+nixPkgs = ["nodejs_24"]
 
 [phases.install]
-cmds = ["yarn install"]
+cmds = ["npm ci --legacy-peer-deps"]
 
 [phases.build]
-cmds = ["yarn build"]
+cmds = ["npm run build"]
 
 [start]
-cmd = "npx serve -s build --listen $PORT"
+cmd = "node server.js"

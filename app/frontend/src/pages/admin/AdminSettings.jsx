@@ -1,3 +1,4 @@
+import { adminFetch as fetch } from '../../lib/adminApi';
 import React, { useState, useEffect } from 'react';
 import { Save, DollarSign, AlertCircle, CheckCircle } from 'lucide-react';
 import { useCurrency } from '../../context/CurrencyContext';
@@ -19,7 +20,7 @@ const AdminSettings = () => {
     const fetchSettings = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}/api/settings`);
+            const response = await fetch(`${''}/api/settings`);
 
             if (response.ok) {
                 const data = await response.json();
@@ -34,21 +35,23 @@ const AdminSettings = () => {
     };
 
     const handleSave = async () => {
+        const rate = Number(usdToTjsRate);
+        if (!Number.isFinite(rate) || rate <= 0) {
+            setError('Введите положительный курс валюты.');
+            return;
+        }
         try {
             setSaving(true);
             setError(null);
             setSuccess(false);
-
-            const token = localStorage.getItem('adminToken');
-            const response = await fetch(`${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}/api/settings`, {
+            const response = await fetch(`${''}/api/settings`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Admin-Token': token
                 },
                 body: JSON.stringify({
                     id: 'global_settings',
-                    usd_to_tjs_rate: parseFloat(usdToTjsRate)
+                    usd_to_tjs_rate: rate
                 })
             });
 
@@ -105,7 +108,7 @@ const AdminSettings = () => {
                     </div>
                     <div>
                         <h2 className="text-lg font-bold text-gray-900">Курс валют</h2>
-                        <p className="text-sm text-gray-500">Управление курсом обмена валют на сайте</p>
+                        
                     </div>
                 </div>
 
@@ -119,11 +122,12 @@ const AdminSettings = () => {
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">1 USD =</span>
                                     <input
+                                        aria-label="Курс USD к TJS"
                                         type="number"
                                         step="0.01"
                                         value={usdToTjsRate}
                                         onChange={(e) => setUsdToTjsRate(e.target.value)}
-                                        className="w-full pl-20 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-semibold"
+                                        className="w-full pl-20 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#074089] focus:border-transparent text-lg font-semibold"
                                     />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">с</span>
                                 </div>
@@ -131,15 +135,12 @@ const AdminSettings = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                className="w-full sm:w-auto bg-[#074089] hover:bg-[#052c5e] disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"
                             >
                                 <Save size={18} />
                                 {saving ? 'Сохранение...' : 'Сохранить'}
                             </button>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                            Этот курс будет использоваться для автоматического пересчета цен на сайте
-                        </p>
                     </div>
 
                     {lastUpdated && (
@@ -156,20 +157,7 @@ const AdminSettings = () => {
                 </div>
             </div>
 
-            {/* Info Card */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex gap-3">
-                    <AlertCircle className="text-blue-600 flex-shrink-0" size={20} />
-                    <div className="text-sm text-blue-800">
-                        <p className="font-medium mb-1">Как это работает:</p>
-                        <ul className="list-disc list-inside space-y-1 text-blue-700">
-                            <li>Установите актуальный курс доллара к сомони</li>
-                            <li>Все цены в USD будут автоматически пересчитаны по этому курсу</li>
-                            <li>Пользователи смогут переключаться между TJS и USD на сайте</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
         </div>
     );
 };
