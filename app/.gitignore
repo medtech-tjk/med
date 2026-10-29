@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+**/admin_token.txt
+.venv*/
+**/__pycache__/
+**/node_modules/
+frontend/build/
+docs/audit/phase4/verification/tools/node_modules/
+docs/audit/phase4/verification/mongo-data/
+
+**/.pytest_cache/
+**/*.pyc
+docs/audit/phase4/verification/mongo-runtime.json
+docs/audit/phase4/centralize-db.py
+docs/audit/phase4/clear-legacy-admin.py

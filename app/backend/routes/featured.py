@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent
 load_dotenv(ROOT_DIR / '.env')
 from models import FeaturedProduct
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 import os
 from typing import List
@@ -14,9 +14,6 @@ from datetime import datetime, timezone
 router = APIRouter(prefix="/api/featured", tags=["Featured Products"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 @router.get("/")
 async def get_featured_products():
@@ -73,7 +70,7 @@ async def update_featured_order(featured_id: str, order: int):
         {"$set": {"order": order}}
     )
     
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Featured product not found")
     
     return {"message": "Featured product order updated"}

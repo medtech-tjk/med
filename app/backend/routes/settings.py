@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 from models import Settings
 import os
@@ -13,9 +13,6 @@ load_dotenv(ROOT_DIR / '.env')
 router = APIRouter(prefix="/api/settings", tags=["Settings"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 @router.get("")
 async def get_settings():

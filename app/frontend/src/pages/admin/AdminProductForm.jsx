@@ -1,3 +1,4 @@
+import { adminFetch as fetch } from '../../lib/adminApi';
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft, Plus, X, AlertCircle, Upload, Loader2, FileText, Trash2 } from 'lucide-react';
@@ -57,9 +58,7 @@ const AdminProductForm = () => {
   const [specGroupsEn, setSpecGroupsEn] = useState([
     { title: 'Main Specifications', items: [{ key: '', value: '' }] }
   ]);
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   useEffect(() => {
     fetchCategories();
@@ -236,7 +235,7 @@ const AdminProductForm = () => {
     try {
       const response = await fetch(`${API_URL}/api/upload/`, {
         method: 'POST',
-        headers: { 'X-Admin-Token': token },
+        headers: {},
         body: formData
       });
 
@@ -268,7 +267,7 @@ const AdminProductForm = () => {
     try {
       const response = await fetch(`${API_URL}/api/upload/document`, {
         method: 'POST',
-        headers: { 'X-Admin-Token': token },
+        headers: {},
         body: formData
       });
 
@@ -426,7 +425,6 @@ const AdminProductForm = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(productData)
       });
@@ -472,28 +470,32 @@ const AdminProductForm = () => {
           <h2 className="text-lg font-bold text-gray-900 mb-6">Основная информация</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Название *</label>
+              <label htmlFor="product-name" className="block text-sm font-medium text-gray-700 mb-1">Название *</label>
               <input
+                id="product-name"
                 type="text"
                 value={form.name}
+                aria-label="Название товара"
                 onChange={(e) => handleNameChange(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+              <label htmlFor="product-name-en" className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
               <input
+                id="product-name-en"
                 type="text"
                 value={form.name_en}
                 onChange={(e) => setForm({ ...form, name_en: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 placeholder="Product name in English"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Артикул (SKU)</label>
+              <label htmlFor="product-sku" className="block text-sm font-medium text-gray-700 mb-1">Артикул (SKU)</label>
               <input
+                id="product-sku"
                 type="text"
                 value={form.sku}
                 onChange={(e) => setForm({ ...form, sku: e.target.value })}
@@ -502,11 +504,13 @@ const AdminProductForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Категория *</label>
+              <label htmlFor="product-category" className="block text-sm font-medium text-gray-700 mb-1">Категория *</label>
               <select
+                id="product-category"
                 value={form.category_id}
+                aria-label="Категория товара"
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 required
               >
                 <option value="">Выберите категорию</option>
@@ -516,11 +520,12 @@ const AdminProductForm = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Подкатегория</label>
+              <label htmlFor="product-subcategory" className="block text-sm font-medium text-gray-700 mb-1">Подкатегория</label>
               <select
+                id="product-subcategory"
                 value={form.subcategory_id}
                 onChange={(e) => handleSubcategoryChange(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 disabled={!selectedCategory}
               >
                 <option value="">Выберите подкатегорию</option>
@@ -531,11 +536,12 @@ const AdminProductForm = () => {
             </div>
             {selectedSubcategory?.children && selectedSubcategory.children.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Тип (3 уровень)</label>
+                <label htmlFor="product-third-level" className="block text-sm font-medium text-gray-700 mb-1">Тип (3 уровень)</label>
                 <select
+                  id="product-third-level"
                   value={form.third_level_id}
                   onChange={(e) => handleThirdLevelChange(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 >
                   <option value="">Выберите тип</option>
                   {selectedSubcategory.children.map(child => (
@@ -545,21 +551,23 @@ const AdminProductForm = () => {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Бренд</label>
+              <label htmlFor="product-brand" className="block text-sm font-medium text-gray-700 mb-1">Бренд</label>
               <input
+                id="product-brand"
                 type="text"
                 value={form.brand}
                 onChange={(e) => setForm({ ...form, brand: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ссылка на видео (YouTube/Vimeo)</label>
+              <label htmlFor="product-video-url" className="block text-sm font-medium text-gray-700 mb-1">Ссылка на видео (YouTube/Vimeo)</label>
               <input
+                id="product-video-url"
                 type="url"
                 value={form.video_url || ''}
                 onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 placeholder="https://www.youtube.com/watch?v=..."
               />
               <p className="text-xs text-gray-500 mt-1">Поддерживаются YouTube и Vimeo ссылки</p>
@@ -572,7 +580,7 @@ const AdminProductForm = () => {
                     type="checkbox"
                     checked={form.price_on_request || false}
                     onChange={(e) => setForm({ ...form, price_on_request: e.target.checked })}
-                    className="w-3.5 h-3.5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-3.5 h-3.5 text-blue-600 rounded border-gray-300 focus:ring-[#074089]"
                   />
                   <span>Цена по запросу</span>
                 </label>
@@ -580,8 +588,9 @@ const AdminProductForm = () => {
               <input
                 type="number"
                 value={form.price_on_request ? '' : (form.price || '')}
+                aria-label="Цена товара в TJS"
                 onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] transition-all ${
                   form.price_on_request ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : ''
                 }`}
                 disabled={form.price_on_request}
@@ -595,7 +604,7 @@ const AdminProductForm = () => {
                 type="number"
                 value={form.price_on_request ? '' : (form.old_price || '')}
                 onChange={(e) => setForm({ ...form, old_price: parseFloat(e.target.value) || 0 })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089] transition-all ${
                   form.price_on_request ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : ''
                 }`}
                 placeholder={form.price_on_request ? 'Недоступно' : 'Для скидки'}
@@ -603,11 +612,12 @@ const AdminProductForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Наличие *</label>
+              <label htmlFor="product-stock-status" className="block text-sm font-medium text-gray-700 mb-1">Наличие *</label>
               <select
+                id="product-stock-status"
                 value={form.in_stock ? 'in_stock' : 'on_request'}
                 onChange={(e) => setForm({ ...form, in_stock: e.target.value === 'in_stock' })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
               >
                 <option value="in_stock">Есть в наличии</option>
                 <option value="on_request">По заявке</option>
@@ -781,7 +791,6 @@ const AdminProductForm = () => {
             <div className="text-center py-8 text-gray-500">
               <FileText className="mx-auto mb-2 text-gray-300" size={48} />
               <p>Документы не загружены</p>
-              <p className="text-sm">Загрузите PDF файлы для отображения на странице товара</p>
             </div>
           )}
         </div>
@@ -795,7 +804,7 @@ const AdminProductForm = () => {
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[150px]"
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[150px]"
                 placeholder="Полное описание товара..."
               />
             </div>
@@ -804,12 +813,11 @@ const AdminProductForm = () => {
               <textarea
                 value={form.description_en}
                 onChange={(e) => setForm({ ...form, description_en: e.target.value })}
-                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 min-h-[150px]"
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#074089] min-h-[150px]"
                 placeholder="Full product description in English..."
               />
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">Поддерживается HTML разметка</p>
         </div>
 
         {/* Category-specific Specifications */}
@@ -818,9 +826,6 @@ const AdminProductForm = () => {
             <h2 className="text-lg font-bold text-gray-900 mb-6">
               Фильтруемые характеристики "{selectedSubcategory?.name}"
             </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Эти характеристики используются для фильтрации товаров в каталоге
-            </p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {categorySpecs.map((spec) => (
                 <div key={spec.key}>
@@ -831,7 +836,7 @@ const AdminProductForm = () => {
                         type="text"
                         value={specValues[spec.key] || ''}
                         onChange={(e) => setSpecValues({ ...specValues, [spec.key]: e.target.value })}
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                         placeholder={`Введите ${spec.key.toLowerCase()}`}
                         list={`${spec.key}-options`}
                       />
@@ -847,7 +852,7 @@ const AdminProductForm = () => {
                     <select
                       value={specValues[spec.key] || ''}
                       onChange={(e) => setSpecValues({ ...specValues, [spec.key]: e.target.value })}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                     >
                       <option value="">Выберите значение</option>
                       {spec.options && spec.options.map(opt => (
@@ -866,7 +871,6 @@ const AdminProductForm = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-bold text-gray-900">Группы характеристик</h2>
-              <p className="text-sm text-gray-500">Добавьте характеристики с заголовками (напр. "Основные характеристики", "Технические данные")</p>
             </div>
             <button
               type="button"
@@ -886,7 +890,7 @@ const AdminProductForm = () => {
                     type="text"
                     value={group.title}
                     onChange={(e) => updateSpecGroupTitle(groupIndex, e.target.value)}
-                    className="flex-1 px-4 py-2 border rounded-lg font-semibold focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border rounded-lg font-semibold focus:ring-2 focus:ring-[#074089]"
                     placeholder="Заголовок группы (напр. Основные характеристики)"
                   />
                   {specGroups.length > 1 && (
@@ -902,25 +906,26 @@ const AdminProductForm = () => {
 
                 <div className="space-y-2">
                   {group.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="flex items-center gap-2">
+                    <div key={itemIndex} className="grid grid-cols-[minmax(0,1fr)_32px] sm:flex items-center gap-2">
                       <input
                         type="text"
                         value={item.key}
                         onChange={(e) => updateSpecInGroup(groupIndex, itemIndex, 'key', e.target.value)}
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                        className="min-w-0 flex-1 px-3 py-2 border rounded-lg text-sm"
                         placeholder="Название (напр. Вес)"
                       />
                       <input
                         type="text"
                         value={item.value}
                         onChange={(e) => updateSpecInGroup(groupIndex, itemIndex, 'value', e.target.value)}
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                        className="min-w-0 flex-1 px-3 py-2 border rounded-lg text-sm"
                         placeholder="Значение (напр. 5 кг)"
                       />
                       <button
                         type="button"
                         onClick={() => removeSpecFromGroup(groupIndex, itemIndex)}
-                        className="text-gray-400 hover:text-red-500 p-1"
+                        aria-label="Удалить характеристику"
+                        className="col-start-2 row-start-1 row-span-2 text-slate-500 hover:text-red-700 p-1"
                       >
                         <X size={18} />
                       </button>
@@ -946,7 +951,6 @@ const AdminProductForm = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-bold text-gray-900">Specification Groups (English)</h2>
-              <p className="text-sm text-gray-500">Add specifications in English for international visitors</p>
             </div>
             <button
               type="button"
@@ -966,7 +970,7 @@ const AdminProductForm = () => {
                     type="text"
                     value={group.title}
                     onChange={(e) => updateSpecGroupTitleEn(groupIndex, e.target.value)}
-                    className="flex-1 px-4 py-2 border rounded-lg font-semibold focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border rounded-lg font-semibold focus:ring-2 focus:ring-[#074089]"
                     placeholder="Group title (e.g. Main Specifications)"
                   />
                   {specGroupsEn.length > 1 && (
@@ -982,25 +986,26 @@ const AdminProductForm = () => {
 
                 <div className="space-y-2">
                   {group.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="flex items-center gap-2">
+                    <div key={itemIndex} className="grid grid-cols-[minmax(0,1fr)_32px] sm:flex items-center gap-2">
                       <input
                         type="text"
                         value={item.key}
                         onChange={(e) => updateSpecInGroupEn(groupIndex, itemIndex, 'key', e.target.value)}
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                        className="min-w-0 flex-1 px-3 py-2 border rounded-lg text-sm"
                         placeholder="Name (e.g. Weight)"
                       />
                       <input
                         type="text"
                         value={item.value}
                         onChange={(e) => updateSpecInGroupEn(groupIndex, itemIndex, 'value', e.target.value)}
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                        className="min-w-0 flex-1 px-3 py-2 border rounded-lg text-sm"
                         placeholder="Value (e.g. 5 kg)"
                       />
                       <button
                         type="button"
                         onClick={() => removeSpecFromGroupEn(groupIndex, itemIndex)}
-                        className="text-gray-400 hover:text-red-500 p-1"
+                        aria-label="Remove specification"
+                        className="col-start-2 row-start-1 row-span-2 text-slate-500 hover:text-red-700 p-1"
                       >
                         <X size={18} />
                       </button>
@@ -1033,7 +1038,7 @@ const AdminProductForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 py-3 px-6 bg-[#074089] text-white rounded-lg font-semibold hover:bg-[#052c5e] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <Save size={20} />
             {loading ? 'Сохранение...' : 'Сохранить'}

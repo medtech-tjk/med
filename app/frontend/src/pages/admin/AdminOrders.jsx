@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { adminFetch as fetch } from '../../lib/adminApi';
+import React, { useState, useEffect, useRef } from 'react';
+import { Dialog, DialogContent, DialogTitle } from '../../components/ui/dialog';
 import { FileText, Eye, Check, X, AlertCircle, Clock } from 'lucide-react';
 
 const AdminOrders = () => {
@@ -7,9 +9,8 @@ const AdminOrders = () => {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const orderTrigger = useRef(null);
+  const API_URL = '';
 
   useEffect(() => {
     fetchOrders();
@@ -19,7 +20,7 @@ const AdminOrders = () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/api/orders/`, {
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
       if (response.ok) {
         const data = await response.json();
@@ -42,7 +43,6 @@ const AdminOrders = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify({ status })
       });
@@ -115,7 +115,7 @@ const AdminOrders = () => {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilterStatus('')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === '' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === '' ? 'bg-[#074089] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
           >
             Все ({orders.length})
@@ -124,7 +124,7 @@ const AdminOrders = () => {
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === status ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${filterStatus === status ? 'bg-[#074089] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               {label} ({orders.filter(o => o.status === status).length})
@@ -135,11 +135,10 @@ const AdminOrders = () => {
 
       {/* Order Detail Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <Dialog open={!!selectedOrder} onOpenChange={open=>{if(!open)setSelectedOrder(null);}}>
+          <DialogContent aria-describedby={undefined} onCloseAutoFocus={event=>{event.preventDefault();orderTrigger.current?.focus();}} className="bg-white rounded-xl shadow-xl w-[calc(100%-32px)] max-w-lg max-h-[90vh] overflow-y-auto p-0 gap-0">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-bold">Заявка #{selectedOrder.id.slice(0, 8)}</h2>
-              <button onClick={() => setSelectedOrder(null)}><X size={24} /></button>
+              <DialogTitle className="text-xl font-bold">Заявка #{selectedOrder.id.slice(0, 8)}</DialogTitle>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -211,8 +210,8 @@ const AdminOrders = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Orders Table */}
@@ -255,7 +254,8 @@ const AdminOrders = () => {
                     <td className="px-6 py-4 text-gray-500">{formatDate(order.created_at)}</td>
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() => setSelectedOrder(order)}
+                        onClick={event => {orderTrigger.current=event.currentTarget;setSelectedOrder(order);}}
+                        aria-label={`Открыть заявку ${order.id}`}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <Eye size={18} />

@@ -1,30 +1,35 @@
 import "./App.css";
+import "./design-system.css";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
-import CategoryView from "./pages/CategoryView";
-import SubcategoryView from "./pages/SubcategoryView";
-import ThirdLevelView from "./pages/ThirdLevelView";
-import ProductDetail from "./pages/ProductDetail";
-import BrandPage from "./pages/BrandPage";
-import Cart from "./pages/Cart";
-import About from "./pages/About";
-import Services from "./pages/Services";
+import RouteMetadata from "./components/RouteMetadata";
 import { Toaster } from "./components/ui/sonner";
+import { Toaster as CartToaster } from "./components/ui/toaster";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import { LanguageProvider } from "./context/LanguageContext";
 
-// Admin pages
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminCategories from "./pages/admin/AdminCategories";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminProductForm from "./pages/admin/AdminProductForm";
-import AdminSlides from "./pages/admin/AdminSlides";
-import AdminFeatured from "./pages/admin/AdminFeatured";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminSettings from "./pages/admin/AdminSettings";
+
+const Home = lazy(() => import("./pages/Home"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Catalog = lazy(() => import("./pages/Catalog"));
+const CategoryView = lazy(() => import("./pages/CategoryView"));
+const SubcategoryView = lazy(() => import("./pages/SubcategoryView"));
+const ThirdLevelView = lazy(() => import("./pages/ThirdLevelView"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const BrandPage = lazy(() => import("./pages/BrandPage"));
+const Cart = lazy(() => import("./pages/Cart"));
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminProductForm = lazy(() => import("./pages/admin/AdminProductForm"));
+const AdminSlides = lazy(() => import("./pages/admin/AdminSlides"));
+const AdminFeatured = lazy(() => import("./pages/admin/AdminFeatured"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
 function App() {
   return (
@@ -32,6 +37,8 @@ function App() {
       <LanguageProvider>
         <CurrencyProvider>
           <BrowserRouter>
+            <RouteMetadata />
+            <Suspense fallback={<div className="route-loading" role="status" aria-live="polite">Загрузка страницы…</div>}>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Home />} />
@@ -44,6 +51,7 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
+              <Route path="*" element={<NotFound />} />
 
               {/* Admin routes */}
               <Route path="/admin" element={<AdminLogin />} />
@@ -59,8 +67,10 @@ function App() {
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
             </Routes>
+            </Suspense>
           </BrowserRouter>
           <Toaster />
+          <CartToaster />
         </CurrencyProvider>
       </LanguageProvider>
     </div>

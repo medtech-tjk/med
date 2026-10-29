@@ -1,3 +1,4 @@
+import { adminFetch as fetch } from '../../lib/adminApi';
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Save, X, AlertCircle, Image as ImageIcon, GripVertical, Upload, Loader2 } from 'lucide-react';
 
@@ -22,9 +23,7 @@ const AdminSlides = () => {
     order: 0,
     is_active: true
   });
-
-  const token = localStorage.getItem('adminToken');
-  const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+  const API_URL = '';
 
   useEffect(() => {
     fetchSlides();
@@ -55,7 +54,7 @@ const AdminSlides = () => {
     try {
       const response = await fetch(`${API_URL}/api/upload/`, {
         method: 'POST',
-        headers: { 'X-Admin-Token': token },
+        headers: {},
         body: formData
       });
 
@@ -83,7 +82,6 @@ const AdminSlides = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Token': token
         },
         body: JSON.stringify(form)
       });
@@ -105,7 +103,7 @@ const AdminSlides = () => {
     try {
       const response = await fetch(`${API_URL}/api/slides/${slideId}`, {
         method: 'DELETE',
-        headers: { 'X-Admin-Token': token }
+        headers: {}
       });
 
       if (response.ok) {
@@ -173,7 +171,7 @@ const AdminSlides = () => {
         <h1 className="text-2xl font-bold text-gray-900">Управление слайдером</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Plus size={18} />
           Добавить слайд
@@ -203,7 +201,7 @@ const AdminSlides = () => {
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Например: Медицинское оборудование"
                   required
                 />
@@ -214,7 +212,7 @@ const AdminSlides = () => {
                   type="text"
                   value={form.title_en}
                   onChange={(e) => setForm({ ...form, title_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="e.g. Medical Equipment"
                 />
               </div>
@@ -224,7 +222,7 @@ const AdminSlides = () => {
                   type="text"
                   value={form.subtitle}
                   onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Краткое описание"
                 />
               </div>
@@ -234,7 +232,7 @@ const AdminSlides = () => {
                   type="text"
                   value={form.subtitle_en}
                   onChange={(e) => setForm({ ...form, subtitle_en: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   placeholder="Short description in English"
                 />
               </div>
@@ -288,7 +286,7 @@ const AdminSlides = () => {
                     type="text"
                     value={form.image}
                     onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                     placeholder="URL изображения (https://...)"
                   />
                 </div>
@@ -301,7 +299,7 @@ const AdminSlides = () => {
                     type="text"
                     value={form.cta_text}
                     onChange={(e) => setForm({ ...form, cta_text: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   />
                 </div>
                 <div>
@@ -310,7 +308,7 @@ const AdminSlides = () => {
                     type="text"
                     value={form.cta_text_en}
                     onChange={(e) => setForm({ ...form, cta_text_en: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                   />
                 </div>
               </div>
@@ -320,7 +318,7 @@ const AdminSlides = () => {
                   type="text"
                   value={form.cta_link}
                   onChange={(e) => setForm({ ...form, cta_link: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 />
               </div>
               <div>
@@ -329,7 +327,7 @@ const AdminSlides = () => {
                   type="number"
                   value={form.order}
                   onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#074089]"
                 />
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
@@ -352,7 +350,7 @@ const AdminSlides = () => {
               <button
                 onClick={handleSave}
                 disabled={!form.title || !form.image}
-                className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 py-2 px-4 bg-[#074089] text-white rounded-lg hover:bg-[#052c5e] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Save size={18} />
                 Сохранить
@@ -368,7 +366,6 @@ const AdminSlides = () => {
           <div className="p-12 text-center">
             <ImageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">Слайдов пока нет</p>
-            <p className="text-gray-400">Добавьте первый слайд для главной страницы</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">

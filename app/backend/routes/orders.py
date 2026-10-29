@@ -4,30 +4,30 @@ from dotenv import load_dotenv
 from pathlib import Path
 import httpx
 import logging
+from html import escape
 
 ROOT_DIR = Path(__file__).parent.parent
 load_dotenv(ROOT_DIR / '.env')
 from models import Order
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 import os
 from datetime import datetime, timezone
+from typing import Literal
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 # Telegram config
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 class StatusUpdate(BaseModel):
-    status: str
+    status: Literal['new', 'processing', 'completed', 'cancelled']
 
 async def send_telegram_notification(order: dict):
     """Send order notification to Telegram bot"""
@@ -40,7 +40,7 @@ async def send_telegram_notification(order: dict):
         items_text = ""
         has_price_on_request = False
         for i, item in enumerate(order.get('items', []), 1):
-            item_name = item.get('name', 'Товар')
+            item_name = escape(str(item.get('name', 'Товар')))
             item_qty = item.get('quantity', 1)
             if item.get('price_on_request'):
                 has_price_on_request = True
@@ -57,19 +57,19 @@ async def send_telegram_notification(order: dict):
         # Create message
         message = f"""🛒 <b>НОВАЯ ЗАЯВКА!</b>
 
-👤 <b>ФИО:</b> {order.get('full_name', '-')}
-📞 <b>Телефон:</b> {order.get('phone', '-')}
-📍 <b>Адрес:</b> {order.get('address', '-')}
-📧 <b>Email:</b> {order.get('email', '-') or 'не указан'}
-🏢 <b>Организация:</b> {order.get('organization', '-') or 'не указана'}
+👤 <b>ФИО:</b> {escape(str(order.get('full_name', '-')))}
+📞 <b>Телефон:</b> {escape(str(order.get('phone', '-')))}
+📍 <b>Адрес:</b> {escape(str(order.get('address', '-')))}
+📧 <b>Email:</b> {escape(str(order.get('email') or 'не указан'))}
+🏢 <b>Организация:</b> {escape(str(order.get('organization') or 'не указана'))}
 
 📦 <b>Товары:</b>{items_text}
 
 💰 <b>ИТОГО:</b> {total_text}
 
-💬 <b>Комментарий:</b> {order.get('message', '-') or 'нет'}
+💬 <b>Комментарий:</b> {escape(str(order.get('message') or 'нет'))}
 
-🆔 Заказ: {order.get('id', '-')}
+🆔 Заказ: {escape(str(order.get('id', '-')))}
 📅 {datetime.now().strftime('%d.%m.%Y %H:%M')}"""
         
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -99,7 +99,21 @@ async def send_telegram_notification(order: dict):
 @router.post("/")
 async def create_order(order: Order):
     """Create a new order and send notification to Telegram"""
-    order_dict = order.dict()
+    order_dict = order.model_dump()
+    order_dict['id'] = str(uuid4())
+    # Cart data is editable in the browser: read prices and names from the catalog.
+    product_ids = list({item.id for item in order.items})
+    products = await db.products.find({'id': {'$in': product_ids}}, {'_id': 0}).to_list(len(product_ids))
+    catalog = {product['id']: product for product in products}
+    if any(product_id not in catalog for product_id in product_ids):
+        raise HTTPException(status_code=400, detail='One or more products are no longer available')
+    for item in order_dict['items']:
+        product = catalog[item['id']]
+        item['name'] = product['name']
+        item['brand'] = product.get('brand', '')
+        item['price_on_request'] = bool(product.get('price_on_request', False))
+        item['price'] = 0 if item['price_on_request'] else product['price']
+    order_dict['total'] = round(sum(item['price'] * item['quantity'] for item in order_dict['items']), 2)
     order_dict['created_at'] = datetime.now(timezone.utc)
     order_dict['status'] = 'new'
     
@@ -109,7 +123,7 @@ async def create_order(order: Order):
     # Send Telegram notification
     await send_telegram_notification(order_dict)
     
-    return {"id": order.id, "message": "Заявка успешно отправлена"}
+    return {"id": order_dict['id'], "message": "Заявка успешно отправлена"}
 
 @router.get("/", dependencies=[Depends(verify_admin_token)])
 async def get_orders(skip: int = 0, limit: int = 100):
@@ -117,7 +131,7 @@ async def get_orders(skip: int = 0, limit: int = 100):
     orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     return orders
 
-@router.get("/{order_id}")
+@router.get("/{order_id}", dependencies=[Depends(verify_admin_token)])
 async def get_order(order_id: str):
     """Get a single order by ID"""
     order = await db.orders.find_one({"id": order_id}, {"_id": 0})
@@ -133,7 +147,7 @@ async def update_order_status(order_id: str, status_update: StatusUpdate):
         {"$set": {"status": status_update.status}}
     )
     
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Order not found")
     
     return {"message": "Order status updated successfully"}

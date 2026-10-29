@@ -1,84 +1,77 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from contextlib import asynccontextmanager
+import asyncio
 import os
 import logging
 from pathlib import Path
 
-# Setup paths and load env
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+uploads_dir = ROOT_DIR / 'uploads'
+for directory in (uploads_dir, uploads_dir / 'documents', uploads_dir / 'logos'):
+    directory.mkdir(parents=True, exist_ok=True)
 
-# Create uploads directory BEFORE importing routes
-uploads_dir = ROOT_DIR / "uploads"
-uploads_dir.mkdir(parents=True, exist_ok=True)
-
-# Create documents and logos directories
-documents_dir = uploads_dir / "documents"
-documents_dir.mkdir(parents=True, exist_ok=True)
-logos_dir = uploads_dir / "logos"
-logos_dir.mkdir(parents=True, exist_ok=True)
-
-# Import routes after uploads dir is created
+from database import client, db, ensure_indexes
+from rate_limit import configured_limiter, AbuseProtectionMiddleware, SecurityHeadersMiddleware
+from middleware import is_production, load_admin_token
 from routes import categories, products, orders, featured, upload, news, slides, admin, settings, seo, prerender
 
-# MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-db_name = os.environ.get('DB_NAME', 'tib_tekhnologiya')
-client = AsyncIOMotorClient(mongo_url)
-db = client[db_name]
+limiter = configured_limiter()
 
-# Create the main app without a prefix
-app = FastAPI(title="Tib Tekhnologiya API")
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
+@asynccontextmanager
+async def lifespan(app):
+    if is_production():
+        if not os.environ.get('MONGO_URL') or not os.environ.get('DB_NAME'):
+            raise RuntimeError('MONGO_URL and DB_NAME are required in production')
+        if not load_admin_token():
+            raise RuntimeError('ADMIN_TOKEN with at least 32 characters is required in production')
+        if os.environ.get('FRONTEND_PROXY', '').lower() == 'true' and len(os.environ.get('PROXY_SHARED_SECRET', '')) < 32:
+            raise RuntimeError('FRONTEND_PROXY requires a shared PROXY_SHARED_SECRET of at least 32 characters')
+        try:
+            ttl=int(os.environ.get('SESSION_TTL_SECONDS','1800'))
+            if not 60 <= ttl <= 28800: raise ValueError()
+        except ValueError:
+            raise RuntimeError('SESSION_TTL_SECONDS must be between 60 and 28800')
+    try:
+        if hasattr(limiter, 'redis'):
+            await limiter.redis.ping()
+        await ensure_indexes()
+        yield
+    finally:
+        await limiter.close()
+        await client.close()
 
-# Add your routes to the router
-@api_router.get("/")
+
+app = FastAPI(title='Tib Tekhnologiya API', lifespan=lifespan)
+api_router = APIRouter(prefix='/api')
+
+
+@api_router.get('/')
 async def root():
-    return {"message": "Tib Tekhnologiya API"}
+    return {'message': 'Tib Tekhnologiya API'}
 
-@api_router.get("/health")
+
+@api_router.get('/health')
 async def health_check():
-    return {"status": "healthy"}
+    try:
+        await asyncio.wait_for(client.admin.command('ping'), timeout=2)
+        if hasattr(limiter, 'redis'):
+            await asyncio.wait_for(limiter.redis.ping(), timeout=2)
+        return {'status': 'healthy'}
+    except Exception:
+        return JSONResponse({'status': 'unavailable'}, status_code=503)
 
-# Include all route modules
-app.include_router(categories.router)
-app.include_router(products.router)
-app.include_router(orders.router)
-app.include_router(featured.router)
-app.include_router(upload.router)
-app.include_router(news.router)
-app.include_router(slides.router)
-app.include_router(admin.router)
-app.include_router(settings.router)
-app.include_router(seo.router)
-app.include_router(prerender.router)
 
-# Include the main api router
+for route in (categories, products, orders, featured, upload, news, slides, admin, settings, seo, prerender):
+    app.include_router(route.router)
 app.include_router(api_router)
-
-# Mount uploads directory for static file serving
-app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+app.mount('/uploads', StaticFiles(directory=str(uploads_dir)), name='uploads')
+app.add_middleware(AbuseProtectionMiddleware, limiter=limiter)
+app.add_middleware(CORSMiddleware, allow_credentials=False, allow_origins=[origin.strip() for origin in os.environ.get('CORS_ORIGINS', 'https://medtech.tj,https://www.medtech.tj,http://localhost:3000,http://localhost:3100').split(',') if origin.strip()], allow_methods=['*'], allow_headers=['*'])
+app.add_middleware(SecurityHeadersMiddleware)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

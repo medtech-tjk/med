@@ -1,0 +1,98 @@
+{
+  "contrast": [
+    {
+      "label": "Primary button",
+      "foreground": "#ffffff",
+      "background": "#074089",
+      "ratio": 9.98,
+      "AA": true
+    },
+    {
+      "label": "Primary hover",
+      "foreground": "#ffffff",
+      "background": "#052c5e",
+      "ratio": 13.74,
+      "AA": true
+    },
+    {
+      "label": "Main text",
+      "foreground": "#172b45",
+      "background": "#ffffff",
+      "ratio": 14.31,
+      "AA": true
+    },
+    {
+      "label": "Muted text",
+      "foreground": "#53657b",
+      "background": "#ffffff",
+      "ratio": 5.97,
+      "AA": true
+    },
+    {
+      "label": "Muted background text",
+      "foreground": "#53657b",
+      "background": "#f3f6fa",
+      "ratio": 5.51,
+      "AA": true
+    },
+    {
+      "label": "Footer copy",
+      "foreground": "#d5e3f6",
+      "background": "#092d5b",
+      "ratio": 10.5,
+      "AA": true
+    },
+    {
+      "label": "Stock text",
+      "foreground": "#166534",
+      "background": "#ffffff",
+      "ratio": 7.13,
+      "AA": true
+    },
+    {
+      "label": "Request stock",
+      "foreground": "#9a3412",
+      "background": "#ffffff",
+      "ratio": 7.31,
+      "AA": true
+    },
+    {
+      "label": "Discount badge",
+      "foreground": "#ffffff",
+      "background": "#b91c1c",
+      "ratio": 6.47,
+      "AA": true
+    },
+    {
+      "label": "Popular badge",
+      "foreground": "#9a3412",
+      "background": "#fff7ed",
+      "ratio": 6.88,
+      "AA": true
+    }
+  ],
+  "sourceHexOccurrences": {
+    "#f1f1f1": 1,
+    "#074089": 282,
+    "#2c5bb4": 26,
+    "#052c5e": 17,
+    "#eef4fc": 1,
+    "#102f57": 2,
+    "#172b45": 1,
+    "#53657b": 1,
+    "#ffffff": 1,
+    "#f3f6fa": 2,
+    "#dce4ee": 1,
+    "#092d5b": 1,
+    "#d5e3f6": 1,
+    "#f5f7fb": 1,
+    "#166534": 2,
+    "#9a3412": 1,
+    "#f6f8fb": 1,
+    "#b9cce4": 1,
+    "#9db9dc": 1,
+    "#3278d0": 1,
+    "#f8fafc": 1
+  },
+  "note": "Contrast checks cover named solid-color pairs. They do not certify every rendered state, image background or all WCAG criteria."
+}

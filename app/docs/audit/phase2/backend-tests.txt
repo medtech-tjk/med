@@ -1,0 +1,57 @@
+\u26a0\ufe0f Cloudinary env vars not set, falling back to local storage
+2026-10-29 14:54:40,505 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,508 - httpx - INFO - HTTP Request: PUT http://testserver/api/categories/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,511 - httpx - INFO - HTTP Request: DELETE http://testserver/api/categories/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,514 - httpx - INFO - HTTP Request: PUT http://testserver/api/categories/offline-test/reorder "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,517 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/reorder-all "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,520 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/offline-test/subcategories "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,522 - httpx - INFO - HTTP Request: PUT http://testserver/api/categories/subcategories/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,525 - httpx - INFO - HTTP Request: DELETE http://testserver/api/categories/subcategories/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,527 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/subcategories/reorder-all "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,530 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/third-level/reorder-all "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,532 - httpx - INFO - HTTP Request: POST http://testserver/api/categories/subcategories/offline-test/children "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,535 - httpx - INFO - HTTP Request: PUT http://testserver/api/categories/third-level/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,537 - httpx - INFO - HTTP Request: DELETE http://testserver/api/categories/third-level/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,540 - httpx - INFO - HTTP Request: POST http://testserver/api/products/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,542 - httpx - INFO - HTTP Request: PUT http://testserver/api/products/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,545 - httpx - INFO - HTTP Request: DELETE http://testserver/api/products/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,547 - httpx - INFO - HTTP Request: GET http://testserver/api/orders/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,550 - httpx - INFO - HTTP Request: GET http://testserver/api/orders/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,552 - httpx - INFO - HTTP Request: PATCH http://testserver/api/orders/offline-test/status "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,555 - httpx - INFO - HTTP Request: POST http://testserver/api/featured/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,557 - httpx - INFO - HTTP Request: DELETE http://testserver/api/featured/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,560 - httpx - INFO - HTTP Request: PUT http://testserver/api/featured/offline-test/order "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,563 - httpx - INFO - HTTP Request: POST http://testserver/api/upload/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,566 - httpx - INFO - HTTP Request: POST http://testserver/api/upload/image "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,569 - httpx - INFO - HTTP Request: DELETE http://testserver/api/upload/image/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,571 - httpx - INFO - HTTP Request: POST http://testserver/api/upload/document "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,574 - httpx - INFO - HTTP Request: DELETE http://testserver/api/upload/document/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,577 - httpx - INFO - HTTP Request: POST http://testserver/api/news/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,579 - httpx - INFO - HTTP Request: PUT http://testserver/api/news/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,582 - httpx - INFO - HTTP Request: DELETE http://testserver/api/news/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,584 - httpx - INFO - HTTP Request: PUT http://testserver/api/news/offline-test/order "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,587 - httpx - INFO - HTTP Request: GET http://testserver/api/slides/all "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,589 - httpx - INFO - HTTP Request: POST http://testserver/api/slides/ "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,592 - httpx - INFO - HTTP Request: PUT http://testserver/api/slides/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,595 - httpx - INFO - HTTP Request: DELETE http://testserver/api/slides/offline-test "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,598 - httpx - INFO - HTTP Request: GET http://testserver/api/admin/stats "HTTP/1.1 401 Unauthorized"
+2026-10-29 14:54:40,600 - httpx - INFO - HTTP Request: PUT http://testserver/api/settings "HTTP/1.1 401 Unauthorized"
+.C:\Users\alijo\AppData\Local\Programs\Python\Python314\Lib\site-packages\pydantic\main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+C:\Users\alijo\Documents\medteck2026\app\backend\routes\slides.py:73: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  slide_dict = slide.dict()
+..C:\Users\alijo\Documents\medteck2026\app\backend\routes\products.py:248: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  product_dict = product.dict()
+.2026-10-29 14:54:40,613 - httpx - INFO - HTTP Request: GET http://testserver/api/orders/example "HTTP/1.1 200 OK"
+..C:\Users\alijo\AppData\Local\Programs\Python\Python314\Lib\site-packages\pydantic\main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+..2026-10-29 14:54:40,620 - httpx - INFO - HTTP Request: GET http://testserver/api/orders/example "HTTP/1.1 401 Unauthorized"
+.C:\Users\alijo\AppData\Local\Programs\Python\Python314\Lib\site-packages\pydantic\main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+.2026-10-29 14:54:40,635 - httpx - INFO - HTTP Request: GET http://testserver/api/products/?in_stock=true "HTTP/1.1 200 OK"
+.2026-10-29 14:54:40,637 - routes.orders - INFO - Telegram notification sent for order None
+.
+----------------------------------------------------------------------
+Ran 12 tests in 0.144s
+
+OK

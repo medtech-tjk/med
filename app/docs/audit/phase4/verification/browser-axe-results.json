@@ -1,0 +1,415 @@
+{
+  "timestamp": "2026-10-29T23:22:16.983Z",
+  "origin": "http://localhost:3100",
+  "browser": "Microsoft Edge / bundled Playwright",
+  "fixture": "Every API intercepted; external network blocked; no production writes or notifications",
+  "results": [
+    {
+      "path": "/",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/catalog",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/catalog",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/catalog/audit-category",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/catalog/audit-category",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 1
+          }
+        ]
+      }
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 4
+          }
+        ]
+      }
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory/audit-type",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory/audit-type",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/product/audit-device",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 29,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/product/audit-device",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 28,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/brand/Audit%20fixture",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/brand/Audit%20fixture",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/about",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 45
+          }
+        ]
+      }
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 26,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 48
+          }
+        ]
+      }
+    },
+    {
+      "path": "/services",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 15
+          }
+        ]
+      }
+    },
+    {
+      "path": "/services",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 18
+          }
+        ]
+      }
+    },
+    {
+      "path": "/cart",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/cart",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/admin/login",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin/login",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "nodes": 3
+          }
+        ]
+      }
+    },
+    {
+      "path": "/admin",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 20,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 20,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin/settings",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 23,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin/settings",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 23,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin/products/new",
+      "width": 360,
+      "documentWidth": 360,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": []
+      }
+    },
+    {
+      "path": "/admin/products/new",
+      "width": 1440,
+      "documentWidth": 1440,
+      "noHorizontalOverflow": true,
+      "axe": {
+        "violations": [],
+        "passes": 25,
+        "incomplete": []
+      }
+    }
+  ],
+  "filterStates": [
+    {
+      "path": "/catalog/audit-category",
+      "visible": true,
+      "width": 328,
+      "scrollWidth": 328,
+      "clientWidth": 328,
+      "documentWidth": 360
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory",
+      "visible": true,
+      "width": 328,
+      "scrollWidth": 328,
+      "clientWidth": 328,
+      "documentWidth": 360
+    },
+    {
+      "path": "/catalog/audit-category/audit-subcategory/audit-type",
+      "visible": true,
+      "width": 328,
+      "scrollWidth": 328,
+      "clientWidth": 328,
+      "documentWidth": 360
+    }
+  ],
+  "errors": [],
+  "xssBlocked": true,
+  "limitations": "Axe covers only these pages/states and cannot certify WCAG conformance."
+}

@@ -1,10 +1,12 @@
+import FilterOptions from '../components/FilterOptions';
+import { readCart } from '../lib/cart';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
-import { useCategories, useProducts } from '../hooks/useApi';
+import { useCategories, useProductsPage } from '../hooks/useApi';
 import { Loader2, Filter, X, SlidersHorizontal, PackageCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -26,7 +28,7 @@ const ThirdLevelView = () => {
   // Load cart from localStorage
   useEffect(() => {
     const loadCart = () => {
-      const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const savedCart = readCart();
       setCart(savedCart);
     };
     loadCart();
@@ -56,28 +58,27 @@ const ThirdLevelView = () => {
   );
 
   // Загрузка товаров
-  const { products, loading: productsLoading } = useProducts({
+  const { products, loading: productsLoading, total, pages: totalPages, facets } = useProductsPage({
     ...(thirdLevel
       ? { third_level_id: thirdLevel.id }
       : { subcategory_id: subcategory?.id }),
-    brand: selectedBrand || undefined
+    brand: selectedBrand || undefined,
+    min_price: priceRange.min ? Number(priceRange.min) : undefined,
+    max_price: priceRange.max ? Number(priceRange.max) : undefined,
+    in_stock: inStockOnly ? true : undefined,
+    sort: ({popular:'popular',price_asc:'price_asc',price_desc:'price_desc',name_asc:'name',newest:'new'})[sortBy] || 'popular',
+    page: currentPage, page_size: itemsPerPage, language
   });
 
   // Получить уникальные бренды
   const brands = useMemo(() => {
+    if (facets?.brands) return facets.brands.filter(brand => !['all','all brands','все бренды'].includes(brand.trim().toLowerCase()));
     const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
     return uniqueBrands.sort();
-  }, [products]);
+  }, [products, facets]);
 
   // Фильтрация
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      if (priceRange.min && product.price < parseFloat(priceRange.min)) return false;
-      if (priceRange.max && product.price > parseFloat(priceRange.max)) return false;
-      if (inStockOnly && product.in_stock === false) return false;
-      return true;
-    });
-  }, [products, priceRange, inStockOnly]);
+  const filteredProducts = products;
 
   const clearFilters = () => {
     setSelectedBrand('');
@@ -88,36 +89,8 @@ const ThirdLevelView = () => {
   const hasActiveFilters = selectedBrand || priceRange.min || priceRange.max || inStockOnly;
 
   // Сортировка товаров
-  const sortedProducts = useMemo(() => {
-    const sorted = [...filteredProducts];
-    switch (sortBy) {
-      case 'price_asc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return (a.price || 0) - (b.price || 0);
-        });
-      case 'price_desc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return (b.price || 0) - (a.price || 0);
-        });
-      case 'name_asc':
-        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-      default:
-        return sorted;
-    }
-  }, [filteredProducts, sortBy]);
-
-  // Пагинация
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return sortedProducts.slice(start, start + itemsPerPage);
-  }, [sortedProducts, currentPage, itemsPerPage]);
+  const sortedProducts = products;
+  const paginatedProducts = products;
 
   // Сброс страницы при изменении фильтров
   useEffect(() => {
@@ -126,11 +99,11 @@ const ThirdLevelView = () => {
 
   if (categoriesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <Loader2 className="animate-spin text-[#074089] mx-auto" size={48} />
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -138,14 +111,14 @@ const ThirdLevelView = () => {
 
   if (!category || !subcategory) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Категория не найдена</h1>
           <Link to="/catalog" className="text-[#074089] hover:text-[#2C5BB4]">
             Вернуться в каталог
           </Link>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -154,11 +127,11 @@ const ThirdLevelView = () => {
   const currentName = getLocalizedName(thirdLevel) || getLocalizedName(subcategory);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart cartCount={cart.length} />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">Главная</Link>
@@ -183,7 +156,7 @@ const ThirdLevelView = () => {
               {currentName}
             </h1>
             <p className="text-gray-600 mt-1">
-              {filteredProducts.length} {language === 'ru' ? (filteredProducts.length === 1 ? 'товар' : 'товаров') : 'products'}
+              {total} {language === 'ru' ? (total === 1 ? 'товар' : 'товаров') : 'products'}
             </p>
           </div>
 
@@ -191,23 +164,25 @@ const ThirdLevelView = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setInStockOnly(!inStockOnly)}
+              aria-label={language === 'ru' ? 'В наличии' : 'In Stock'}
+              aria-pressed={inStockOnly}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${inStockOnly
                 ? 'bg-[#074089] text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-[#074089]'
                 }`}
             >
-              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] animate-pulse'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] '}`}></span>
               <PackageCheck size={16} />
               <span className="hidden sm:inline">{language === 'ru' ? 'В наличии' : 'In Stock'}</span>
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
+              aria-expanded={showFilters} className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
             >
               <SlidersHorizontal size={18} />
               {language === 'ru' ? 'Фильтры' : 'Filters'}
               {hasActiveFilters && (
-                <span className="bg-[#074089] text-white text-xs px-2 py-0.5 rounded-full">!</span>
+                <span className="bg-[#074089] text-white text-xs px-2 py-0.5 rounded-full">{(selectedBrand?1:0)+(priceRange.min || priceRange.max ? 1 : 0)+(inStockOnly?1:0)}</span>
               )}
             </button>
           </div>
@@ -222,8 +197,8 @@ const ThirdLevelView = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
-          <aside className={`lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+          <aside className={`filter-sidebar w-full lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                   <Filter size={18} />
@@ -240,30 +215,10 @@ const ThirdLevelView = () => {
                 )}
               </div>
 
-              {/* Close button for mobile */}
-              <button
-                onClick={() => setShowFilters(false)}
-                className="lg:hidden absolute top-4 right-4 text-gray-500"
-              >
-                <X size={24} />
-              </button>
-
               {/* Brand Filter */}
               {brands.length > 0 && (
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Бренд
-                  </label>
-                  <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#074089] focus:border-transparent"
-                  >
-                    <option value="">Все бренды</option>
-                    {brands.map(brand => (
-                      <option key={brand} value={brand}>{brand}</option>
-                    ))}
-                  </select>
+                  <FilterOptions label={t('brand')} options={brands} value={selectedBrand} onChange={setSelectedBrand} multiple={false} />
                 </div>
               )}
 
@@ -309,7 +264,7 @@ const ThirdLevelView = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Другие типы
                   </label>
-                  <div className="space-y-1 max-h-48 overflow-y-auto">
+                  <div className="space-y-1 ">
                     {subcategory.children.map((sibling) => (
                       <Link
                         key={sibling.id}
@@ -329,11 +284,11 @@ const ThirdLevelView = () => {
           </aside>
 
           {/* Products Grid */}
-          <div className="flex-1">
+          <div className="catalog-results flex-1">
             {/* Sorting and Items per page */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h2 className="text-xl font-bold text-gray-900">
-                {language === 'ru' ? 'Товары' : 'Products'} ({sortedProducts.length})
+                {language === 'ru' ? 'Товары' : 'Products'} ({total})
               </h2>
 
               <div className="flex flex-wrap items-center gap-3">
@@ -341,6 +296,7 @@ const ThirdLevelView = () => {
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600 hidden sm:inline">{language === 'ru' ? 'Показать:' : 'Show:'}</span>
                   <select
+                    aria-label={language === 'ru' ? 'Количество товаров на странице' : 'Products per page'}
                     value={itemsPerPage}
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
                     className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent bg-white"
@@ -353,6 +309,7 @@ const ThirdLevelView = () => {
 
                 {/* Sort */}
                 <select
+                  aria-label={language === 'ru' ? 'Сортировка товаров' : 'Sort products'}
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent bg-white"
@@ -372,7 +329,7 @@ const ThirdLevelView = () => {
               </div>
             ) : paginatedProducts.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                   {paginatedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
@@ -422,7 +379,7 @@ const ThirdLevelView = () => {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

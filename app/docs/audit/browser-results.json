@@ -1,0 +1,212 @@
+{
+  "browser": "Microsoft Edge / Playwright",
+  "fixtures": "Empty API and visibly labeled test catalog; no real orders sent",
+  "checks": [
+    {
+      "page": "home",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "home",
+      "width": 390,
+      "documentWidth": 390,
+      "passed": true
+    },
+    {
+      "page": "home",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "home",
+      "width": 1024,
+      "documentWidth": 1024,
+      "passed": true
+    },
+    {
+      "page": "home",
+      "width": 1280,
+      "documentWidth": 1280,
+      "passed": true
+    },
+    {
+      "page": "home",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/catalog",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/catalog",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/catalog",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/catalog/audit-category",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/catalog/audit-category",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/catalog/audit-category",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/product/audit-device",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/product/audit-device",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/product/audit-device",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/about",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/about",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/about",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/services",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/services",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/services",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/cart",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/cart",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/cart",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/not-a-real-page",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/not-a-real-page",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/not-a-real-page",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    },
+    {
+      "page": "/admin",
+      "width": 360,
+      "documentWidth": 360,
+      "passed": true
+    },
+    {
+      "page": "/admin",
+      "width": 768,
+      "documentWidth": 768,
+      "passed": true
+    },
+    {
+      "page": "/admin",
+      "width": 1440,
+      "documentWidth": 1440,
+      "passed": true
+    }
+  ],
+  "search": true,
+  "language": true,
+  "cart": true,
+  "corruptCart": true,
+  "xssBlocked": true,
+  "assets": true,
+  "unknownRoute404": true,
+  "errors": []
+}

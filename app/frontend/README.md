@@ -1,70 +1,19 @@
-# Getting Started with Create React App
+# Tib Technology frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React 19 application built with Vite and tested with Vitest.
 
-## Available Scripts
+Use Node.js 22.12 or newer supported LTS (Node 24 is configured for Nixpacks) and npm 11. Install reproducibly with `npm ci`.
 
-In the project directory, you can run:
+- `npm start`: development server at http://localhost:3000, with React refresh.
+- `npm test`: run all unit tests once in jsdom.
+- `npm run test:watch`: interactive test watch mode.
+- `npm run build`: production assets in `build/`, followed by sitemap generation.
+- `npm run serve`: Express production server serving `build/` and proxying backend requests.
 
-### `npm start`
+`index.html` is the Vite entry point. Public assets remain in `public/`. The `@` source alias and JSX in existing `.js` files are supported without renaming application files. Tailwind/PostCSS configuration is retained.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Browser API and upload requests always use the site origin. The production Express server proxies `/api/*` and `/uploads/*` to the server-only `BACKEND_URL`, preserving session cookies. In development, Vite proxies the same paths to `BACKEND_URL` (fallback `REACT_APP_BACKEND_URL` or `http://127.0.0.1:8001`). Never put backend URLs containing credentials, or any secrets, in public `REACT_APP_*` variables. `DISABLE_HOT_RELOAD=true` disables refresh.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+For production, set `BACKEND_URL` and `PROXY_SHARED_SECRET` in the frontend service environment. Set the identical `PROXY_SHARED_SECRET`, `FRONTEND_PROXY=true`, `ADMIN_TOKEN` (32+ random characters), `MONGO_URL`, `DB_NAME`, and shared `REDIS_URL` in the backend service environment. Set `TRUST_PROXY` only to the actual trusted ingress topology (for example, a verified single proxy hop); do not guess this value. The app's `.env.example` files list the expected keys. The obsolete plaintext `backend/admin_token.txt` was removed; provision a fresh login key in the deployment secret store.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The CRACO/webpack build chain has been retired, including its optional webpack health and visual-edit plugins. Production health and API routes belong to Express. The sitemap postbuild script retains its existing environment-variable behavior.

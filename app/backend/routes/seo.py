@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import Response
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -15,9 +15,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["SEO"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 SITE_URL = os.environ.get('SITE_URL', 'https://medtech.tj').rstrip('/')
 

@@ -1,0 +1,13 @@
+
+> frontend@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.5 C:/Users/alijo/Documents/medteck2026/app/frontend
+
+
+ Test Files  6 passed (6)
+      Tests  11 passed (11)
+   Start at  21:25:22
+   Duration  2.04s (environment 89%, transform 5%, import 4%, tests 1%, worker 1%)
+

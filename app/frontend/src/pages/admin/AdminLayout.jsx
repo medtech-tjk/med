@@ -13,22 +13,34 @@ import {
   Home,
   Settings
 } from 'lucide-react';
+import { getAdminSession, logoutAdmin } from '../../lib/adminApi';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [session, setSession] = useState('checking');
+  const [logoutError,setLogoutError] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      navigate('/admin');
-    }
+    let active = true;
+    const expire = () => navigate('/admin', {replace:true});
+    window.addEventListener('admin-session-expired',expire);
+    getAdminSession()
+      .then(()=>{if(active)setSession('verified');})
+      .catch(()=>{if(active)setSession('error');});
+    return ()=>{active=false;window.removeEventListener('admin-session-expired',expire);};
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    navigate('/admin');
+  useEffect(() => {
+    const close = event => { if(event.key === 'Escape') setSidebarOpen(false); };
+    window.addEventListener('keydown',close);
+    return ()=>window.removeEventListener('keydown',close);
+  },[]);
+
+  const handleLogout = async () => {
+    try {await logoutAdmin();navigate('/admin',{replace:true});}
+    catch {setLogoutError('Не удалось завершить сессию. Проверьте соединение и повторите выход.');}
   };
 
   const menuItems = [
@@ -41,17 +53,19 @@ const AdminLayout = () => {
     { path: '/admin/settings', label: 'Настройки', icon: Settings },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path+'/');
+
+  if (session !== 'verified') return <div className="min-h-screen grid place-items-center bg-slate-50 p-6"><div role="status" className="text-center max-w-md"><p className="text-slate-700">{session === 'checking' ? 'Проверяем доступ…' : 'Не удалось проверить доступ. Проверьте соединение и повторите вход.'}</p>{session === 'error' && <button onClick={()=>navigate('/admin',{replace:true})} className="ui-button mt-5 px-5 py-3 bg-[#074089] text-white">Вернуться ко входу</button>}</div></div>;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="admin-shell min-h-screen bg-slate-50">
       {/* Mobile header */}
       <div className="lg:hidden bg-white shadow-md px-4 py-3 flex items-center justify-between">
-        <button onClick={() => setSidebarOpen(true)} className="p-2">
+        <button aria-label="Открыть меню администратора" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)} className="p-2">
           <Menu size={24} />
         </button>
         <span className="font-bold text-gray-900">Админ-панель</span>
-        <Link to="/" className="p-2 text-blue-600">
+        <Link to="/" aria-label="На сайт" className="p-2 text-[#074089]">
           <Home size={24} />
         </Link>
       </div>
@@ -66,29 +80,30 @@ const AdminLayout = () => {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-gray-900 text-white transform transition-transform duration-300
-        lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed top-0 left-0 z-50 h-full w-64 bg-[#102f57] text-white flex flex-col transform transition-transform duration-200
+        lg:translate-x-0 lg:visible ${sidebarOpen ? 'translate-x-0 visible' : '-translate-x-full invisible'}
       `}>
         <div className="p-6 border-b border-gray-800 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">Tib Tekhnologiya</h1>
             <p className="text-gray-400 text-sm">Админ-панель</p>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2">
+          <button aria-label="Закрыть меню администратора" onClick={() => setSidebarOpen(false)} className="lg:hidden p-2">
             <X size={20} />
           </button>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav aria-label="Разделы админ-панели" className="p-4 space-y-1 flex-1 overflow-y-auto">
           {menuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
+              aria-current={isActive(item.path) ? 'page' : undefined}
               onClick={() => setSidebarOpen(false)}
               className={`
                 flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                 ${isActive(item.path)
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-white/15 text-white'
                   : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                 }
               `}
@@ -99,7 +114,7 @@ const AdminLayout = () => {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
+        <div className="mt-auto p-4 border-t border-white/10">
           <Link
             to="/"
             className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors mb-2"
@@ -119,6 +134,7 @@ const AdminLayout = () => {
 
       {/* Main content */}
       <main className="lg:ml-64 min-h-screen">
+        {logoutError && <p role="alert" className="m-6 p-4 rounded-lg border border-red-200 bg-red-50 text-red-800">{logoutError}</p>}
         <Outlet />
       </main>
     </div>

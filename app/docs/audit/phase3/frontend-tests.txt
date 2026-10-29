@@ -1,0 +1,16 @@
+
+> frontend@0.1.0 test
+> craco test --watch=false --runInBand
+
+PASS src/components/FilterOptions.test.jsx
+PASS src/hooks/useApi.test.js
+PASS src/lib/filterProducts.test.js
+PASS src/lib/sanitize.test.js
+PASS src/lib/cart.test.js
+PASS src/lib/adminApi.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        1.902 s
+Ran all test suites.

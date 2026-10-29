@@ -7,7 +7,7 @@ import { toast } from '../hooks/use-toast';
 import { useCurrency } from '../context/CurrencyContext';
 import { useLanguage } from '../context/LanguageContext';
 
-const BACKEND_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '');
+const BACKEND_URL = '';
 
 const Cart = () => {
   const { formatPrice } = useCurrency();
@@ -247,7 +247,7 @@ const Cart = () => {
   };
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return '/placeholder.png';
+    if (!imagePath) return '/placeholder.svg';
     if (imagePath.startsWith('http')) return imagePath;
     return `${BACKEND_URL}${imagePath}`;
   };
@@ -256,7 +256,7 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header cartCount={getTotalCount()} />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('cartTitle')}</h1>
 
         {orderSuccess ? (
@@ -302,7 +302,7 @@ const Cart = () => {
                       src={getImageUrl(item.image)}
                       alt={item.name}
                       className="w-20 h-20 md:w-32 md:h-32 object-contain rounded-lg flex-shrink-0"
-                      onError={(e) => { e.target.src = '/placeholder.png'; }}
+                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.svg'; }}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
@@ -487,7 +487,7 @@ const Cart = () => {
                           name="email"
                           value={orderForm.email}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4BCDA5] focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#074089] focus:border-transparent transition-all"
                           placeholder="example@email.com"
                         />
                       </div>
@@ -501,7 +501,7 @@ const Cart = () => {
                           name="organization"
                           value={orderForm.organization}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4BCDA5] focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#074089] focus:border-transparent transition-all"
                           placeholder="Название организации"
                         />
                       </div>
@@ -515,7 +515,7 @@ const Cart = () => {
                           value={orderForm.message}
                           onChange={handleInputChange}
                           rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4BCDA5] focus:border-transparent transition-all resize-none"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#074089] focus:border-transparent transition-all resize-none"
                           placeholder="Дополнительная информация к заказу"
                         />
                       </div>
@@ -523,7 +523,7 @@ const Cart = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-[#4BCDA5] hover:bg-[#3ba88a] disabled:bg-gray-400 text-white font-bold py-4 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        className="ui-button w-full bg-[#074089] hover:bg-[#052c5e] disabled:bg-gray-400 text-white font-semibold py-4 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <span className="flex items-center justify-center gap-2">
@@ -548,7 +548,7 @@ const Cart = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
 
       <Footer />
     </div>

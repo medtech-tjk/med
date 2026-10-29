@@ -81,6 +81,7 @@ const Services = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <Header />
+            <main id="main-content" tabIndex={-1}>
 
             {/* Hero Section */}
             <div className="bg-gradient-to-r from-[#074089] to-[#2C5BB4] text-white py-16">
@@ -190,6 +191,7 @@ const Services = () => {
                 </section>
             </div>
 
+            </main>
             <Footer />
         </div>
     );

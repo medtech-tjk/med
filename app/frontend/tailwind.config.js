@@ -3,12 +3,12 @@ module.exports = {
     darkMode: ["class"],
     content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
+    "./index.html"
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
+        sans: ['Montserrat Variable', 'sans-serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -16,21 +16,21 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
-        // Tib Tekhnologiya brand colors - Mint/Teal
+        // Tib Tekhnologiya brand colors - Blue
         'corporate': {
-          DEFAULT: '#4BCDA5',
-          dark: '#3ba88a',
-          light: '#6dd9b8',
-          50: '#e8f9f4',
-          100: '#d1f3e9',
-          200: '#a3e7d3',
-          300: '#75dbbd',
-          400: '#4BCDA5',
-          500: '#3ba88a',
-          600: '#2d9a7a',
-          700: '#228065',
-          800: '#186650',
-          900: '#0e4c3b',
+          DEFAULT: '#074089',
+          dark: '#052c5e',
+          light: '#3278d0',
+          50: '#f0f5fc',
+          100: '#dce8f8',
+          200: '#b9d0ef',
+          300: '#83acdF',
+          400: '#074089',
+          500: '#052c5e',
+          600: '#074089',
+          700: '#07366f',
+          800: '#052c5e',
+          900: '#102f57',
         },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -43,7 +43,7 @@ module.exports = {
           foreground: 'hsl(var(--popover-foreground))'
         },
         primary: {
-          DEFAULT: '#4BCDA5',
+          DEFAULT: '#074089',
           foreground: '#ffffff'
         },
         secondary: {
@@ -55,7 +55,7 @@ module.exports = {
           foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: '#3ba88a',
+          DEFAULT: '#052c5e',
           foreground: '#ffffff'
         },
         destructive: {
@@ -64,7 +64,7 @@ module.exports = {
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
-        ring: '#4BCDA5',
+        ring: '#074089',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',

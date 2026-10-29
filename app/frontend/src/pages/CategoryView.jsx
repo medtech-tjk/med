@@ -1,10 +1,12 @@
+import FilterOptions from '../components/FilterOptions';
+import CategoryCard from '../components/CategoryCard';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
-import { useCategories, useProducts } from '../hooks/useApi';
+import { useCategories, useProductsPage } from '../hooks/useApi';
 import { useLanguage } from '../context/LanguageContext';
 import { ChevronRight, Loader2, Filter, X, SlidersHorizontal, PackageCheck } from 'lucide-react';
 
@@ -30,13 +32,18 @@ const CategoryView = () => {
   );
 
   // Загрузка товаров категории
-  const { products, loading: productsLoading } = useProducts({
-    category_id: category?.id,
-    brand: selectedBrand || undefined
+  const { products, loading: productsLoading, total, pages: totalPages, facets } = useProductsPage({
+    category_id: category?.id, brand: selectedBrand || undefined,
+    min_price: priceRange.min ? Number(priceRange.min) : undefined,
+    max_price: priceRange.max ? Number(priceRange.max) : undefined,
+    in_stock: inStockOnly ? true : undefined,
+    sort: ({popular:'popular',price_asc:'price_asc',price_desc:'price_desc',name:'name',newest:'new'})[sortBy] || 'popular',
+    page: currentPage, page_size: itemsPerPage, language
   });
 
   // Получить уникальные бренды
   const brands = useMemo(() => {
+    if (facets?.brands) return facets.brands;
     const unique = new Map();
     products.forEach(p => {
       if (!p.brand || typeof p.brand !== 'string') return;
@@ -56,47 +63,10 @@ const CategoryView = () => {
       }
     });
     return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
-  }, [products]);
+  }, [products, facets]);
 
   // Фильтрация по цене и наличию
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      if (priceRange.min && product.price < parseFloat(priceRange.min)) return false;
-      if (priceRange.max && product.price > parseFloat(priceRange.max)) return false;
-      if (inStockOnly && product.in_stock !== true) return false;
-      return true;
-    });
-  }, [products, priceRange, inStockOnly]);
-
-  // Sorting products
-  const sortedProducts = useMemo(() => {
-    const sorted = [...filteredProducts];
-    switch (sortBy) {
-      case 'price_asc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return a.price - b.price;
-        });
-      case 'price_desc':
-        return sorted.sort((a, b) => {
-          if (a.price_on_request && !b.price_on_request) return 1;
-          if (!a.price_on_request && b.price_on_request) return -1;
-          return b.price - a.price;
-        });
-      case 'name':
-        return sorted.sort((a, b) => {
-          const nameA = language === 'ru' ? (a.name_ru || a.name_en) : (a.name_en || a.name_ru);
-          const nameB = language === 'ru' ? (b.name_ru || b.name_en) : (b.name_en || b.name_ru);
-          return nameA.localeCompare(nameB);
-        });
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      case 'popular':
-      default:
-        return sorted;
-    }
-  }, [filteredProducts, sortBy, language]);
+  const paginatedProducts = products;
 
   // Reset page when filters change
   useEffect(() => {
@@ -104,13 +74,6 @@ const CategoryView = () => {
   }, [sortBy, itemsPerPage, priceRange, selectedBrand, inStockOnly]);
 
   // Pagination
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const paginatedProducts = useMemo(() => {
-    return sortedProducts.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
-  }, [sortedProducts, currentPage, itemsPerPage]);
 
   // Прокрутка в начало при загрузке
   useEffect(() => {
@@ -204,11 +167,11 @@ const CategoryView = () => {
 
   if (categoriesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-[#074089] mx-auto" size={48} />
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -216,25 +179,25 @@ const CategoryView = () => {
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+        <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('categoryNotFound')}</h1>
           <Link to="/catalog" className="text-[#074089] hover:text-[#2C5BB4]">
             {t('backToCatalog')}
           </Link>
-        </div>
+        </main>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <FloatingCart cartCount={cart.length} />
 
-      <div className="container mx-auto px-4 py-8 flex-1">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-6 flex-wrap">
           <Link to="/" className="hover:text-[#074089]">{t('home')}</Link>
@@ -254,18 +217,21 @@ const CategoryView = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setInStockOnly(!inStockOnly)}
+              aria-label={language === 'ru' ? 'В наличии' : 'In Stock'}
+              aria-pressed={inStockOnly}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${inStockOnly
                 ? 'bg-[#074089] text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-[#074089]'
                 }`}
             >
-              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] animate-pulse'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-white' : 'bg-[#074089] '}`}></span>
               <PackageCheck size={16} />
               <span className="hidden sm:inline">{language === 'ru' ? 'В наличии' : 'In Stock'}</span>
             </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
+              aria-expanded={showFilters}
+              className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300 text-gray-700"
             >
               <SlidersHorizontal size={18} />
               {t('filters')}
@@ -282,8 +248,8 @@ const CategoryView = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
-          <aside className={`lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+          <aside className={`filter-sidebar w-full lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                   <Filter size={18} />
@@ -303,19 +269,7 @@ const CategoryView = () => {
               {/* Brand Filter */}
               {brands.length > 0 && (
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('brand')}
-                  </label>
-                  <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#074089] focus:border-transparent"
-                  >
-                    <option value="">{t('allBrands')}</option>
-                    {brands.map(brand => (
-                      <option key={brand} value={brand}>{brand}</option>
-                    ))}
-                  </select>
+                  <FilterOptions label={t('brand')} options={brands} value={selectedBrand} onChange={setSelectedBrand} multiple={false} />
                 </div>
               )}
 
@@ -348,7 +302,7 @@ const CategoryView = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t('subcategories')}
                   </label>
-                  <div className="space-y-1 max-h-64 overflow-y-auto">
+                  <div className="space-y-1 ">
                     {category.children.map((sub) => (
                       <Link
                         key={sub.id}
@@ -365,42 +319,13 @@ const CategoryView = () => {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="catalog-results flex-1">
             {/* Subcategories Grid */}
             {category.children && category.children.length > 0 && (
               <section className="mb-12">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">{t('subcategories')}</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {category.children.map((subcategory) => (
-                    <Link
-                      key={subcategory.id}
-                      to={`/catalog/${category.slug}/${subcategory.slug}`}
-                      className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white"
-                    >
-                      <div className="relative h-32 md:h-40 overflow-hidden bg-gradient-to-br from-[#074089]/10 to-white">
-                        {subcategory.image ? (
-                          <img
-                            src={subcategory.image}
-                            alt={getLocalizedName(subcategory)}
-                            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#074089]/20 to-[#074089]/5">
-                            <div className="w-12 h-12 bg-[#074089]/30 rounded-full flex items-center justify-center">
-                              <ChevronRight className="w-6 h-6 text-[#074089]" />
-                            </div>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      </div>
-
-                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                        <h3 className="text-sm md:text-base font-bold group-hover:translate-x-1 transition-transform duration-300 line-clamp-2">
-                          {getLocalizedName(subcategory)}
-                        </h3>
-                      </div>
-                    </Link>
-                  ))}
+                  {category.children.map(subcategory => <CategoryCard key={subcategory.id} category={subcategory} to={`/catalog/${category.slug}/${subcategory.slug}`} />)}
                 </div>
               </section>
             )}
@@ -409,7 +334,7 @@ const CategoryView = () => {
             <section>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                 <h2 className="text-xl font-bold text-gray-900">
-                  {t('products')} {sortedProducts.length > 0 && `(${sortedProducts.length})`}
+                  {t('products')} {total > 0 && `(${total})`}
                 </h2>
 
                 {/* Sorting and Items Per Page Controls */}
@@ -418,6 +343,7 @@ const CategoryView = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">{language === 'ru' ? 'Показать:' : 'Show:'}</span>
                     <select
+                      aria-label={language === 'ru' ? 'Количество товаров на странице' : 'Products per page'}
                       value={itemsPerPage}
                       onChange={(e) => setItemsPerPage(Number(e.target.value))}
                       className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent"
@@ -432,6 +358,7 @@ const CategoryView = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">{language === 'ru' ? 'Сортировка:' : 'Sort by:'}</span>
                     <select
+                      aria-label={language === 'ru' ? 'Сортировка товаров' : 'Sort products'}
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                       className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#074089] focus:border-transparent"
@@ -450,9 +377,9 @@ const CategoryView = () => {
                 <div className="flex justify-center py-12">
                   <Loader2 className="animate-spin text-[#074089]" size={48} />
                 </div>
-              ) : filteredProducts.length > 0 ? (
+              ) : products.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                     {paginatedProducts.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
@@ -543,7 +470,7 @@ const CategoryView = () => {
             </section>
           </div>
         </div>
-      </div>
+      </main>
 
       <Footer />
     </div>

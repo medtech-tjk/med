@@ -1,22 +1,9 @@
 import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
-import os
-from dotenv import load_dotenv
-from pathlib import Path
-
-# Load environment variables
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+from database import db, client
 
 async def init_settings():
     """Initialize global settings with default currency rate"""
-    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-    db_name = os.environ.get('DB_NAME', 'tib_tekhnologiya')
-    
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[db_name]
-    
     # Check if settings exist
     existing_settings = await db.settings.find_one({"id": "global_settings"})
     
@@ -37,7 +24,7 @@ async def init_settings():
         print(f"   USD to TJS rate: {default_settings['usd_to_tjs_rate']}")
         print(f"   Created at: {default_settings['updated_at']}")
     
-    client.close()
+    await client.close()
 
 if __name__ == "__main__":
     print("🔧 Initializing global settings...")

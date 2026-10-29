@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from motor.motor_asyncio import AsyncIOMotorClient
+from database import db, client
 from middleware import verify_admin_token
 import os
 from typing import List, Optional
@@ -15,9 +15,6 @@ load_dotenv(ROOT_DIR / '.env')
 router = APIRouter(prefix="/api/slides", tags=["Slides"])
 
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'test_database')]
 
 class Slide(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -43,7 +40,7 @@ async def get_slides():
     slides = await db.slides.find({"is_active": True}, {"_id": 0}).sort("order", 1).to_list(100)
     return slides
 
-@router.get("/all", response_model=List[Slide])
+@router.get("/all", response_model=List[Slide], dependencies=[Depends(verify_admin_token)])
 async def get_all_slides():
     """Get all slides including inactive (Admin)"""
     slides = await db.slides.find({}, {"_id": 0}).sort("order", 1).to_list(100)
@@ -71,6 +68,8 @@ async def create_slide(slide: Slide):
 async def update_slide(slide_id: str, slide: Slide):
     """Update a slide (Admin only)"""
     slide_dict = slide.dict()
+    slide_dict['id'] = slide_id
+    slide_dict.pop('created_at', None)
     slide_dict['updated_at'] = datetime.now(timezone.utc)
     
     result = await db.slides.update_one(
@@ -78,7 +77,7 @@ async def update_slide(slide_id: str, slide: Slide):
         {"$set": slide_dict}
     )
     
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Slide not found")
     
     return {"message": "Slide updated successfully"}

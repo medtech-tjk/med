@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import uuid
@@ -79,16 +79,26 @@ class Product(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
+class OrderItem(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+    id: str = Field(min_length=1, max_length=200)
+    name: str = Field(min_length=1, max_length=500)
+    price: float = Field(ge=0, allow_inf_nan=False)
+    quantity: int = Field(ge=1, le=10000)
+    price_on_request: bool = False
+    brand: Optional[str] = Field(default=None, max_length=200)
+
 class Order(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    full_name: str
-    phone: str
-    address: str
-    email: Optional[str] = None
-    organization: Optional[str] = None
-    message: Optional[str] = None
-    items: List[Dict] = []
-    total: float
+    full_name: str = Field(min_length=1, max_length=200)
+    phone: str = Field(min_length=5, max_length=40)
+    address: str = Field(min_length=1, max_length=1000)
+    email: Optional[str] = Field(default=None, max_length=254)
+    organization: Optional[str] = Field(default=None, max_length=300)
+    message: Optional[str] = Field(default=None, max_length=2000)
+    items: List[OrderItem] = Field(min_length=1, max_length=100)
+    total: float = Field(ge=0, allow_inf_nan=False)
     status: str = "new"
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -104,6 +114,6 @@ class AdminToken(BaseModel):
 
 class Settings(BaseModel):
     id: str = Field(default="global_settings")
-    usd_to_tjs_rate: float = Field(default=11.2)  # Default exchange rate
+    usd_to_tjs_rate: float = Field(default=11.2, gt=0, allow_inf_nan=False)  # Default exchange rate
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

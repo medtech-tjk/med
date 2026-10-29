@@ -1,3 +1,4 @@
+import { adminFetch as fetch } from '../../lib/adminApi';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, FolderTree, FileText, TrendingUp, AlertCircle } from 'lucide-react';
@@ -18,9 +19,8 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}/api/admin/stats`, {
-        headers: { 'X-Admin-Token': token }
+      const response = await fetch(`${''}/api/admin/stats`, {
+        headers: {}
       });
 
       if (response.ok) {
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/admin/products/new"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+            className="bg-[#074089] hover:bg-[#052c5e] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
           >
             + Добавить товар
           </Link>

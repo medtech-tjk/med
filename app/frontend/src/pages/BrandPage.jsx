@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import FloatingCart from '../components/FloatingCart';
 import ProductCard from '../components/ProductCard';
-import { useProducts, useCategories } from '../hooks/useApi';
+import { useProductsPage, useCategories } from '../hooks/useApi';
 import { ChevronRight, Loader2, Package, Building2 } from 'lucide-react';
 import { toast } from '../hooks/use-toast';
 import { useLanguage } from '../context/LanguageContext';
@@ -19,51 +19,25 @@ const BrandPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(20);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    useEffect(() => { setCurrentPage(1); }, [selectedCategory, sortBy, brandName]);
 
     // Fetch products by brand
-    const { products, loading: productsLoading } = useProducts({ brand: brandName });
+    const { products, loading: productsLoading, total, pages: totalPages, facets } = useProductsPage({
+        brand: brandName, category_id: selectedCategory || undefined,
+        sort: ({popular:'popular','price-asc':'price_asc','price-desc':'price_desc',new:'new'})[sortBy] || 'popular',
+        page: currentPage, page_size: itemsPerPage, language
+    });
     const { categories } = useCategories();
 
     // Get unique categories from brand's products
     const brandCategories = React.useMemo(() => {
-        const categoryIds = [...new Set(products.map(p => p.category_id))];
+        const categoryIds = facets?.category_ids || [...new Set(products.map(p => p.category_id))];
         return categories.filter(c => categoryIds.includes(c.id));
-    }, [products, categories]);
+    }, [products, categories, facets]);
 
     // Filter products by selected category
-    const filteredProducts = React.useMemo(() => {
-        let filtered = [...products];
-
-        if (selectedCategory) {
-            filtered = filtered.filter(p => p.category_id === selectedCategory);
-        }
-
-        // Sort
-        if (sortBy === 'price-asc') {
-            filtered.sort((a, b) => {
-                if (a.price_on_request && !b.price_on_request) return 1;
-                if (!a.price_on_request && b.price_on_request) return -1;
-                return a.price - b.price;
-            });
-        } else if (sortBy === 'price-desc') {
-            filtered.sort((a, b) => {
-                if (a.price_on_request && !b.price_on_request) return 1;
-                if (!a.price_on_request && b.price_on_request) return -1;
-                return b.price - a.price;
-            });
-        } else if (sortBy === 'new') {
-            filtered.sort((a, b) => (b.is_new ? 1 : 0) - (a.is_new ? 1 : 0));
-        }
-
-        return filtered;
-    }, [products, selectedCategory, sortBy]);
-
-    // Pagination
-    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-    const paginatedProducts = filteredProducts.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    const filteredProducts = products;
+    const paginatedProducts = products;
 
     const handleAddToCart = (product) => {
         setCart([...cart, product]);
@@ -89,11 +63,11 @@ const BrandPage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="catalog-page min-h-screen bg-gray-50 flex flex-col">
             <Header />
             <FloatingCart />
 
-            <div className="container mx-auto px-4 py-8 flex-1">
+            <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8 flex-1">
                 {/* Breadcrumbs */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
                     <Link to="/" className="hover:text-[#074089]">{language === 'ru' ? 'Главная' : 'Home'}</Link>
@@ -113,8 +87,8 @@ const BrandPage = () => {
                             </h1>
                             <p className="text-gray-600 mb-4">
                                 {language === 'ru'
-                                    ? `Медицинское оборудование от ${brandName}. Найдено ${products.length} товаров.`
-                                    : `Medical equipment from ${brandName}. Found ${products.length} products.`
+                                    ? `Медицинское оборудование от ${brandName}. Найдено ${total} товаров.`
+                                    : `Medical equipment from ${brandName}. Found ${total} products.`
                                 }
                             </p>
 
@@ -149,11 +123,12 @@ const BrandPage = () => {
                 </div>
 
                 {/* Toolbar */}
-                <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="catalog-toolbar bg-white p-4 rounded-lg mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <span className="text-gray-600">
-                        {language === 'ru' ? 'Найдено' : 'Found'} {filteredProducts.length} {language === 'ru' ? 'товаров' : 'products'}
+                        {language === 'ru' ? 'Найдено' : 'Found'} {total} {language === 'ru' ? 'товаров' : 'products'}
                     </span>
                     <select
+                        aria-label={language === 'ru' ? 'Сортировка товаров' : 'Sort products'}
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
                         className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#074089]"
@@ -251,7 +226,7 @@ const BrandPage = () => {
                         </Link>
                     </div>
                 )}
-            </div>
+            </main>
 
             <Footer />
         </div>
