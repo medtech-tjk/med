@@ -1,7 +1,7 @@
 import { readCart } from '../lib/cart';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Check, ArrowUpRight } from 'lucide-react';
+import { ShoppingCart, Check, ArrowUpRight, Eye } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useLanguage } from '../context/LanguageContext';
 import { toast } from '../hooks/use-toast';
@@ -32,6 +32,7 @@ const ProductCard = ({ product }) => {
         {product.is_new && <span className="bg-[#074089] text-white text-[11px] font-semibold px-2 py-1 rounded-md">{t('new')}</span>}
         {product.is_popular && <span className="bg-orange-50 text-orange-800 text-[11px] font-semibold px-2 py-1 rounded-md">{t('hit')}</span>}
       </div>
+      <span className="product-card-preview" aria-hidden="true"><span><Eye size={16}/>{t('details')}</span></span>
       <ArrowUpRight size={18} className="absolute right-3 bottom-3 text-[#074089]" aria-hidden="true"/>
     </Link>
     <div className="product-card-body">
