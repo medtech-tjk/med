@@ -54,23 +54,8 @@ const Header = ({ cartCount = 0 }) => {
     <>
       <a className="skip-link" href="#main-content">{language === 'ru' ? 'Перейти к содержимому' : 'Skip to content'}</a>
       <header className="site-header sticky top-0 z-50 bg-white border-b border-slate-200">
-        {/* Top bar - Desktop only */}
-        <div className="hidden md:block bg-gradient-to-r from-[#074089] to-[#2C5BB4] text-white py-2">
-          <div className="container mx-auto px-4 flex justify-between items-center text-sm">
-            <div className="flex gap-6">
-              <a href="tel:+992933339639" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
-                <Phone size={14} /> +992 93 333 96 39
-              </a>
-              <a href="mailto:tjkmedtech@gmail.com" className="hover:opacity-80 transition-opacity flex items-center gap-1.5">
-                <Mail size={14} /> tjkmedtech@gmail.com
-              </a>
-            </div>
-            <div>{t('workingHours')}</div>
-          </div>
-        </div>
-
         {/* Main header */}
-        <div className="container mx-auto px-4 py-3 md:py-4">
+        <div className="container mx-auto px-4 py-2 md:py-3">
           <div className="header-layout flex flex-wrap items-center justify-between gap-3 xl:gap-6">
             {/* Logo */}
             <Link to="/" aria-label={language === 'ru' ? 'Tib Technology — главная' : 'Tib Technology — home'} className="flex items-center space-x-2 flex-shrink-0">
@@ -102,17 +87,8 @@ const Header = ({ cartCount = 0 }) => {
 
             {/* Desktop right side */}
             <div className="hidden xl:flex items-center gap-3">
-              {/* Catalog Button - Moved Here */}
-              <Link
-                to="/catalog"
-                className="ui-button flex items-center gap-2 px-5 py-2.5 bg-[#074089] hover:bg-[#052c5e] text-white font-semibold whitespace-nowrap"
-              >
-                <LayoutGrid size={20} />
-                <span>{t('catalog')}</span>
-              </Link>
-
               {/* Functional Links */}
-              <div className="flex items-center gap-1 border-l border-gray-200 pl-3 ml-1">
+              <div className="flex items-center gap-1">
                 {/* Language Switcher */}
                 <button
                   onClick={toggleLanguage}
@@ -148,7 +124,11 @@ const Header = ({ cartCount = 0 }) => {
             <div className="flex items-center gap-8">
               {[['/',t('home')],['/catalog',t('catalog')],['/about',t('about')],['/services',t('services')]].map(([path,label]) => <Link key={path} to={path} aria-current={isActive(path) ? 'page' : undefined}>{label}</Link>)}
             </div>
-            <span className="text-xs text-slate-500">{language === 'ru' ? 'Подбор · Поставка · Сервис' : 'Selection · Supply · Service'}</span>
+            <div className="flex items-center gap-5 text-xs text-slate-600">
+              <a href="tel:+992933339639" className="inline-flex items-center gap-2 whitespace-nowrap"><Phone size={14} aria-hidden="true" />+992 93 333 96 39</a>
+              <a href="mailto:tjkmedtech@gmail.com" className="inline-flex items-center gap-2"><Mail size={14} aria-hidden="true" />tjkmedtech@gmail.com</a>
+              <span className="whitespace-nowrap">{t('workingHours')}</span>
+            </div>
           </div>
         </nav>
       </header>
