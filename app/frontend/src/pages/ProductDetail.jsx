@@ -389,7 +389,7 @@ const ProductDetail = () => {
         <div className="product-detail-card bg-white overflow-hidden mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Gallery Section */}
-            <div className="product-gallery p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
+            <div className="product-gallery border-b lg:border-b-0 lg:border-r border-gray-100">
               {/* Main Image */}
               <div className="product-gallery-main relative mb-4 rounded-xl overflow-hidden">
                 <img
